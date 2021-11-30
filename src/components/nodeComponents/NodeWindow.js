@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from "react";
-import { drawNodeIcons } from "./helperFunctions";
 import dnaIcon from "../../media/icons/dna_helix.png";
 import { layoutObject } from "./helperFunctions";
 
