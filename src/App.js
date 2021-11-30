@@ -1,24 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import { Grid } from "@mui/material";
+import "./App.css";
+import { NodeWindow } from "./components/nodeComponents/NodeWindow";
+import { SurvivalScoreboard } from "./components/survivalScoreboardComponents/SurvivalScoreboard";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Grid container className="App">
+      <Grid item xs={2}>
+        <SurvivalScoreboard />
+      </Grid>
+      {/* <NodeGenerator numberOfNodes={20} margin={10} /> */}
+      <Grid item xs={10}>
+        <div>
+          <NodeWindow />
+        </div>
+      </Grid>
+    </Grid>
   );
 }
 
