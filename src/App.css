@@ -3,8 +3,37 @@
   overflow: hidden;
 }
 
-.dnaCanvas {
+.canvasContainer {
   background-image: url(./media//bg_images/winter_survival.png);
   background-repeat: no-repeat;
   background-size: cover;
+  position: relative;
+  height: 800px;
+  width: 100%;
+}
+
+.canvasContainer::after {
+  position: absolute;
+  inset: 0;
+  background: #2cec8eb8;
+  content: "";
+  filter: opacity(0.3);
+}
+
+canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#dnaCanvas {
+  z-index: 1;
+}
+
+#foodCanvas {
+  z-index: 2;
+}
+
+#shelterCanvas {
+  z-index: 3;
 }

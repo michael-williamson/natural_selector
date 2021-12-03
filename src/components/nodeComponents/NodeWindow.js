@@ -1,22 +1,28 @@
 import React, { useRef, useEffect } from "react";
 import dnaIcon from "../../media/icons/dna_helix.png";
-import { layoutObject } from "./helperFunctions";
+import { getDistance, layoutObject } from "./helperFunctions";
 
-export const NodeWindow = () => {
+export const NodeWindow = (props) => {
+  const { shelterState } = props;
+  const { foodState } = props;
+  const { setFoodStateArray } = props;
+  const { setShelterStateArray } = props;
+  const { canvasDimensions } = props;
+  const { totalTime } = props;
+  const { beginSimulation } = props;
+  const { numberSurvivors } = props;
+  const { setSurvivorState } = props;
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
   useEffect(() => {
-    console.log("use effect running");
     const canvas = canvasRef.current;
-    let canvasWidth = window.innerWidth - 350;
-    let canvasHeight = window.innerHeight - 350;
-    const numNodes = 20;
-    canvas.width = window.innerWidth - 300;
-    canvas.height = window.innerHeight - 300;
+    let canvasWidth = canvasDimensions.canvasWidth;
+    let canvasHeight = canvasDimensions.canvasHeight;
+    const numNodes = numberSurvivors;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
     canvas.style.overflow = "hidden";
-    // canvas.style.width = `${window.innerWidth}px`;
-    // canvas.style.height = `${window.innerHeight}px`;
     const context = canvas.getContext("2d");
     contextRef.current = context;
     const nodeDimensionsObject = layoutObject(canvasHeight, canvasWidth, 20);
@@ -28,16 +34,13 @@ export const NodeWindow = () => {
       this.y = y;
       this.dx = dx;
       this.dy = dy;
+      this.foodCount = 0;
+      this.shelterCount = 0;
+      this.furCount = 0;
+      this.eliminated = false;
 
       this.draw = function () {
-        context.drawImage(icon, this.x, this.y);
-
-        // context.beginPath();
-        // context.arc(this.x, this.y, 40, 0, Math.PI * 2, false);
-        // context.closePath();
-        // context.strokeStyle = "blue";
-        // context.stroke();
-        // context.fill();
+        context.drawImage(icon, this.x, this.y, 60, 60);
       };
       this.update = function () {
         if (this.x > canvasWidth || this.x < 50) {
@@ -50,6 +53,12 @@ export const NodeWindow = () => {
         this.y += this.dy;
         this.draw();
       };
+    }
+    function NodeState() {
+      this.foodCount = 0;
+      this.shelterCount = 0;
+      this.furCount = 0;
+      this.eliminated = false;
     }
 
     let counter = 0;
@@ -64,6 +73,7 @@ export const NodeWindow = () => {
     let dx = 50;
     let dy = dyIntervals / 2;
     const nodeArray = [];
+    const nodeStateArray = [];
     for (let i = 0; i < numNodes; i++) {
       if (firstColumn && counter === 0) {
         counter += 1;
@@ -83,24 +93,90 @@ export const NodeWindow = () => {
         counter = 1;
         topOffset = !topOffset;
       }
-      nodeArray.push(new Node(dx, dy, 2, 2));
+      let maxVelocity = 2;
+      const velocityArray = [0, maxVelocity];
+      let vx = velocityArray[Math.floor(Math.random() * 2)];
+      let vy =
+        vx === maxVelocity
+          ? velocityArray[Math.floor(Math.random() * 2)]
+          : maxVelocity;
+      nodeArray.push(new Node(dx, dy, vx, vy));
+      nodeStateArray.push(new NodeState());
     }
+    nodeArray.forEach((item) => item.draw());
+
     let start;
+    const foodStateBoolArray = Array(foodState.length).fill(false);
+    const shelterStateBoolArray = Array(shelterState.length).fill(false);
+    let foodStateLength = foodState.length;
+    let shelterStateLength = shelterState.length;
     const animateNodes = (timestamp) => {
       if (start === undefined) start = timestamp;
       const elapsed = timestamp - start;
-      if (elapsed < 20000 && drawPending === false) {
+      if (elapsed < 0) return;
+      let totalTimeMilliseconds = totalTime * 1000;
+      if (elapsed < totalTimeMilliseconds && drawPending === false) {
         drawPending = true;
-        // Stop the animation after 20 seconds
         window.requestAnimationFrame(animateNodes);
       }
       context.clearRect(0, 0, canvas.width, canvas.height);
+      let updatedFoodState, updatedShelterState;
       for (let i = 0; i < nodeArray.length; i++) {
+        updatedFoodState = foodState.filter((item, index) => {
+          if (foodStateBoolArray[index]) {
+            return false;
+          } else if (
+            getDistance(item.x, item.y, nodeArray[i].x, nodeArray[i].y) < 50
+          ) {
+            foodStateBoolArray[index] = true;
+            nodeStateArray[i].foodCount = nodeStateArray[i].foodCount += 1;
+            return false;
+          }
+          return true;
+        });
+        updatedShelterState = shelterState.filter((item, index) => {
+          if (shelterStateBoolArray[index]) {
+            return false;
+          } else if (
+            getDistance(item.x, item.y, nodeArray[i].x, nodeArray[i].y) < 50
+          ) {
+            shelterStateBoolArray[index] = true;
+            nodeStateArray[i].shelterCount = nodeStateArray[
+              i
+            ].shelterCount += 1;
+            return false;
+          }
+          return true;
+        });
+
         nodeArray[i].update();
       }
+      if (
+        foodStateLength > updatedFoodState.length ||
+        shelterStateLength > updatedShelterState.length
+      ) {
+        foodStateLength = updatedFoodState.length;
+        shelterStateLength = updatedShelterState.length;
+        setSurvivorState([...nodeStateArray]);
+        setFoodStateArray([...foodStateBoolArray]);
+        setShelterStateArray([...shelterStateBoolArray]);
+      }
+
       drawPending = false;
     };
-    window.requestAnimationFrame(animateNodes);
-  }, []);
-  return <canvas ref={canvasRef} className="dnaCanvas" />;
+    beginSimulation && window.requestAnimationFrame(animateNodes);
+  }, [
+    totalTime,
+    beginSimulation,
+    canvasDimensions.canvasHeight,
+    canvasDimensions.canvasWidth,
+    foodState,
+    numberSurvivors,
+    setFoodStateArray,
+    setShelterStateArray,
+    setSurvivorState,
+    shelterState,
+  ]);
+
+  return <canvas ref={canvasRef} id="dnaCanvas" />;
 };
