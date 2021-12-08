@@ -4,34 +4,25 @@ import fur from "../../media/icons/fur.png";
 import meatFood from "../../media/icons/meat_feed.png";
 import caveShelter from "../../media/icons/cave_shelter.png";
 import { theme } from "../../Theme";
-
-const imgStyle = {
-  width: "20px",
-  height: "20px",
-};
-
-const ImageComponent = (props) => {
-  const { image } = props;
-  const { alt } = props;
-  const { iterations } = props;
-
-  return Array(iterations)
-    .fill(0)
-    .map((item, index) => (
-      <img src={image} alt={alt} key={`${alt}${index}`} style={imgStyle} />
-    ));
-};
+import { ImageComponent } from "../reusableComponents/ImageComponent";
 
 export const IndividualSurvivor = (props) => {
   const { survivorNumber } = props;
   const { foodCount } = props;
   const { shelterCount } = props;
   const { furCount } = props;
+  const { survived } = props;
   return (
-    <Box p={1} bgcolor="info.main">
+    <Box
+      p={1}
+      bgcolor="info.main"
+      border={survived ? 2 : 0}
+      borderColor={theme.palette.primary.light}
+    >
       <Box display="flex" flexDirection="column">
         <Box
           color={theme.palette.primary.light}
+          bgcolor="primary.main"
           fontSize={14}
           fontWeight="bold"
           width={1}

@@ -39,7 +39,7 @@ export const FoodWindow = (props) => {
     });
     nodeArray.forEach((item) => item.draw());
     setNodeObject(nodeArray);
-  }, [foodState, canvasDimensions.canvasWidth, canvasDimensions.canvasHeight]);
+  }, []);
 
   useEffect(() => {
     foodStateArray &&

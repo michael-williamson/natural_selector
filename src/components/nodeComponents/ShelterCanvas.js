@@ -40,11 +40,7 @@ export const ShelterCanvas = (props) => {
     });
     nodeArray.forEach((item) => item.draw());
     setNodeObject(nodeArray);
-  }, [
-    shelterState,
-    canvasDimensions.canvasWidth,
-    canvasDimensions.canvasHeight,
-  ]);
+  }, []);
 
   useEffect(() => {
     shelterStateArray &&
