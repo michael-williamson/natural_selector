@@ -7,11 +7,10 @@ function valuetext(value) {
 }
 
 export const SliderSelectorComponent = (props) => {
-  const { state, setState, setTotalTime } = props;
+  const { state, setState } = props;
   const handleChange = (event) => {
     const value = event.target.value;
     setState(value);
-    setTotalTime(value);
   };
   return (
     <Box px={2}>

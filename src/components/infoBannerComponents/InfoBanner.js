@@ -1,18 +1,17 @@
 import React from "react";
 import { Box } from "@mui/system";
 import { theme } from "../../Theme";
-import fur from "../../media/icons/fur.png";
-import meatFood from "../../media/icons/meat_feed.png";
-import caveShelter from "../../media/icons/cave_shelter.png";
+import { furIcon, meatIcon, caveIcon } from "../../media";
 import { ImageComponent } from "../reusableComponents/ImageComponent";
 
 export const InfoBanner = (props) => {
-  const { timerFinished } = props;
+  const { beginSimulation } = props;
   const { survivorState } = props;
 
   const printResults = () => {
     return survivorState.map((item, index) => {
       if (item.eliminated) return null;
+
       return (
         <Box
           key={index}
@@ -32,25 +31,25 @@ export const InfoBanner = (props) => {
             borderRadius={2}
           >{`Survivor #${index + 1}`}</Box>
           <Box fontSize={20}>
-            Food Count:{" "}
+            <Box>Food Count:</Box>
             <ImageComponent
-              image={meatFood}
+              image={meatIcon}
               iterations={item.foodCount}
               alt="meat"
             />
           </Box>
           <Box fontSize={20}>
-            Fur Count:{" "}
+            <Box>Fur Count:</Box>
             <ImageComponent
-              image={fur}
+              image={furIcon}
               iterations={item.furCount}
               alt="animal fur"
             />
           </Box>
           <Box fontSize={20}>
-            Shelter Count:{" "}
+            <Box>Shelter Count:</Box>
             <ImageComponent
-              image={caveShelter}
+              image={caveIcon}
               iterations={item.shelterCount}
               alt="cave"
             />
@@ -81,9 +80,6 @@ export const InfoBanner = (props) => {
         border={4}
         borderColor={theme.palette.primary.light}
       >
-        {/* <Box fontSize={40} fontWeight="bold">
-          List of Survivors:
-        </Box> */}
         <Box
           color={theme.palette.primary.light}
           fontSize={40}
@@ -91,7 +87,7 @@ export const InfoBanner = (props) => {
           py={4}
           display="flex"
         >
-          {timerFinished ? printResults() : "...awaiting results"}
+          {!beginSimulation ? printResults() : "...awaiting results"}
         </Box>
       </Box>
     </Box>

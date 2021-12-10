@@ -4,8 +4,8 @@ import caveShelter from "../../media/icons/cave_shelter.png";
 const icon = new Image();
 icon.src = caveShelter;
 
-export const ShelterCanvas = (props) => {
-  const { shelterState } = props;
+export const ShelterWindow = (props) => {
+  const { shelterStateXY } = props;
   const { shelterStateArray } = props;
   const { canvasDimensions } = props;
   const canvasRef = useRef(null);
@@ -21,26 +21,26 @@ export const ShelterCanvas = (props) => {
     const context = canvas.getContext("2d");
     contextRef.current = context;
 
-    shelterState.forEach((item) => {
+    shelterStateXY.forEach((item) => {
       contextRef.current.drawImage(icon, item.x, item.y, 40, 40);
     });
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
-    shelterState,
+    shelterStateXY,
   ]);
 
   useEffect(() => {
     shelterStateArray.forEach((item, index) => {
       if (item) {
         contextRef.current.clearRect(
-          shelterState[index].x,
-          shelterState[index].y,
+          shelterStateXY[index].x,
+          shelterStateXY[index].y,
           40,
           40
         );
       }
     });
-  }, [shelterStateArray, shelterState]);
+  }, [shelterStateArray, shelterStateXY]);
   return <canvas ref={canvasRef} id="shelterCanvas"></canvas>;
 };

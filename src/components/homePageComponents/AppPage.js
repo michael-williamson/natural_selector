@@ -8,18 +8,21 @@ import { survivorStateFN } from "../../helperFunctions";
 
 export const AppPage = (props) => {
   const { environmentsPath } = props;
+  //default is 30 seconds for timer
   const [timer, setTimer] = useState(30);
-  const [totalTime, setTotalTime] = useState(30);
   const [beginSimulation, setBeginSimulation] = useState(false);
-  const [numberSurvivors, setNumberSurvivors] = useState(10);
+  //default number of survivors is 10
+  const [numberSurvivors, setNumberSurvivors] = useState({
+    count: 10,
+    max: 10,
+  });
   const [survivorState, setSurvivorState] = useState(survivorStateFN(10));
-  const [timerFinished, setTimerFinished] = useState(false);
 
   const handleClickNumSurvivors = (input) => (event) => {
     setNumberSurvivors((prev) => {
       if (input) {
-        let currentNum = prev + 1;
-        currentNum < 10 &&
+        let currentNum = prev.count + 1;
+        currentNum < prev.max &&
           setSurvivorState((prev) => {
             prev.push({
               foodCount: 0,
@@ -45,6 +48,7 @@ export const AppPage = (props) => {
   const handleClickSimulation = () => {
     setBeginSimulation(true);
   };
+
   return (
     <Grid container>
       <Grid item xs={2}>
@@ -53,23 +57,20 @@ export const AppPage = (props) => {
           beginSimulation={beginSimulation}
           handleClickNumSurvivors={handleClickNumSurvivors}
           setTimer={setTimer}
-          setTotalTime={setTotalTime}
           timer={timer}
-          setTimerFinished={setTimerFinished}
-          numberSurvivors={numberSurvivors}
           survivorState={survivorState}
+          numberSurvivors={numberSurvivors}
         />
       </Grid>
       <Grid item xs={10}>
         <CanvasContainer
-          totalTime={totalTime}
           beginSimulation={beginSimulation}
           numberSurvivors={numberSurvivors}
           setSurvivorState={setSurvivorState}
           environmentsPath={environmentsPath}
         />
         <InfoBanner
-          timerFinished={timerFinished}
+          beginSimulation={beginSimulation}
           survivorState={survivorState}
         />
       </Grid>

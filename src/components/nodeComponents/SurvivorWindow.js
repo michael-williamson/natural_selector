@@ -5,16 +5,16 @@ import { getDistance } from "./helperFunctions";
 const icon = new Image();
 icon.src = dnaIcon;
 
-export const NodeWindow = (props) => {
-  const { shelterState } = props;
-  const { foodState } = props;
+export const SurvivorWindow = (props) => {
+  const { shelterStateXY } = props;
+  const { foodStateXY } = props;
   const { survivorStateXY } = props;
   const { setFoodStateArray } = props;
   const { setShelterStateArray } = props;
   const { canvasDimensions } = props;
-  const { totalTime } = props;
   const { beginSimulation } = props;
   const { setSurvivorState } = props;
+  const { timer } = props;
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
@@ -41,6 +41,7 @@ export const NodeWindow = (props) => {
     }
 
     const survivorStateArray = [];
+
     survivorStateXY.forEach((item) => {
       let maxVelocity = 2;
       const velocityArray = [0, maxVelocity];
@@ -58,19 +59,23 @@ export const NodeWindow = (props) => {
     survivorStateXY,
   ]);
 
+  //this useEffect must only fire once per render, rather than using certain states replica modeled data is created
   useEffect(() => {
     if (!beginSimulation) return;
     let start;
     const context = contextRef.current;
+    //for now padding to keep icons on page
     const buffer = canvasDimensions.buffer;
     const bufferedWidth = canvasDimensions.canvasWidth - buffer;
     const bufferedHeight = canvasDimensions.canvasHeight - buffer;
     const canvas = canvasRef.current;
 
-    let countDown = totalTime;
+    let countDown = timer;
+    //periodic checks for stats
     let firstCheck = false;
     let secondCheck = false;
 
+    //boolean logic gate for time interval checks
     const timerID = setInterval(() => {
       if (countDown <= 15 && !firstCheck) {
         firstCheck = true;
@@ -87,7 +92,6 @@ export const NodeWindow = (props) => {
       this.foodCount = 0;
       this.shelterCount = 0;
       this.furCount = 0;
-      this.eliminated = false;
     }
 
     function Survivor(x, y, dx, dy) {
@@ -115,6 +119,7 @@ export const NodeWindow = (props) => {
         context.clearRect(this.x, this.y, 60, 60);
       };
     }
+
     const survivorStateArray = [];
     const survivorCountArray = [];
 
@@ -130,22 +135,27 @@ export const NodeWindow = (props) => {
       survivorCountArray.push(new SurvivorCount());
     });
 
-    const foodStateBoolArray = Array(7).fill(false);
-    const shelterStateBoolArray = Array(7).fill(false);
-    let foodStateLength = 7;
-    let shelterStateLength = 7;
+    //booleans for index positions of resource icons
+    const foodStateBoolArray = Array(foodStateXY.length).fill(false);
+    const shelterStateBoolArray = Array(shelterStateXY.length).fill(false);
+
+    let foodStateLength = foodStateXY.length;
+    let shelterStateLength = shelterStateXY.length;
+
     const animateNodes = (timestamp) => {
       if (start === undefined) start = timestamp;
       const elapsed = timestamp - start;
       if (elapsed < 0) return;
-      let totalTimeMilliseconds = totalTime * 1000;
+      let totalTimeMilliseconds = timer * 1000;
       if (elapsed < totalTimeMilliseconds) {
         window.requestAnimationFrame(animateNodes);
       }
       context.clearRect(0, 0, canvas.width, canvas.height);
+
+      //In this scope variables are available to other fns
       let updatedFoodState, updatedShelterState;
       survivorStateArray.forEach((survivorItem, survivorIndex) => {
-        updatedFoodState = foodState.filter((item, index) => {
+        updatedFoodState = foodStateXY.filter((item, index) => {
           if (foodStateBoolArray[index]) {
             return false;
           } else if (
@@ -161,7 +171,8 @@ export const NodeWindow = (props) => {
           }
           return true;
         });
-        updatedShelterState = shelterState.filter((item, index) => {
+
+        updatedShelterState = shelterStateXY.filter((item, index) => {
           if (shelterStateBoolArray[index]) {
             return false;
           } else if (
@@ -185,13 +196,13 @@ export const NodeWindow = (props) => {
           ) {
             survivorStateArray[survivorIndex].remove();
             survivorStateArray[survivorIndex].removed = true;
-            survivorCountArray[survivorIndex].eliminated = true;
           }
           // first check only needs to apply to one loop
-          if (survivorIndex === survivorStateArray.length - 1) {
+          if (survivorIndex === survivorStateXY.length - 1) {
             firstCheck = false;
           }
         }
+
         if (secondCheck) {
           if (
             survivorCountArray[survivorIndex].foodCount < 1 ||
@@ -199,10 +210,9 @@ export const NodeWindow = (props) => {
           ) {
             survivorStateArray[survivorIndex].remove();
             survivorStateArray[survivorIndex].removed = true;
-            survivorCountArray[survivorIndex].eliminated = true;
           }
           // second check only needs to apply to one loop
-          if (survivorIndex === survivorStateArray.length - 1) {
+          if (survivorIndex === survivorStateXY.length - 1) {
             secondCheck = false;
           }
         }
@@ -210,6 +220,8 @@ export const NodeWindow = (props) => {
           survivorStateArray[survivorIndex].update();
         }
       });
+
+      //shorter array indicates value was intercepted
       if (
         foodStateLength > updatedFoodState.length ||
         shelterStateLength > updatedShelterState.length
@@ -226,13 +238,13 @@ export const NodeWindow = (props) => {
     canvasDimensions.buffer,
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
-    foodState,
+    foodStateXY,
     setFoodStateArray,
     setShelterStateArray,
     setSurvivorState,
-    shelterState,
+    shelterStateXY,
     survivorStateXY,
-    totalTime,
+    timer,
   ]);
 
   return <canvas ref={canvasRef} id="dnaCanvas" />;

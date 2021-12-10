@@ -5,7 +5,7 @@ const icon = new Image();
 icon.src = meatFood;
 
 export const FoodWindow = (props) => {
-  const { foodState } = props;
+  const { foodStateXY } = props;
   const { foodStateArray } = props;
   const { canvasDimensions } = props;
   const canvasRef = useRef(null);
@@ -21,23 +21,27 @@ export const FoodWindow = (props) => {
     const context = canvas.getContext("2d");
     contextRef.current = context;
 
-    foodState.forEach((item) => {
+    foodStateXY.forEach((item) => {
       contextRef.current.drawImage(icon, item.x, item.y, 40, 40);
     });
-  }, [canvasDimensions.canvasHeight, canvasDimensions.canvasWidth, foodState]);
+  }, [
+    canvasDimensions.canvasHeight,
+    canvasDimensions.canvasWidth,
+    foodStateXY,
+  ]);
 
   useEffect(() => {
     foodStateArray.forEach((item, index) => {
       if (item) {
         contextRef.current.clearRect(
-          foodState[index].x,
-          foodState[index].y,
+          foodStateXY[index].x,
+          foodStateXY[index].y,
           40,
           40
         );
       }
     });
-  }, [foodStateArray, foodState]);
+  }, [foodStateArray, foodStateXY]);
 
   return <canvas ref={canvasRef} id="foodCanvas"></canvas>;
 };

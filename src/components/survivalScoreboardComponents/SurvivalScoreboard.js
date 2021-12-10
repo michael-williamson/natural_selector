@@ -12,8 +12,9 @@ export const SurvivalScoreboard = (props) => {
   const { handleClickNumSurvivors } = props;
   const { numberSurvivors } = props;
   const { survivorState } = props;
-  const { timer, setTimer, setTotalTime, setTimerFinished } = props;
+  const { timer, setTimer } = props;
   const [countDown, setCountDown] = useState(30);
+
   useEffect(() => {
     if (!beginSimulation) return;
     const clearCountDown = setInterval(countDownFN, 1000);
@@ -26,7 +27,7 @@ export const SurvivalScoreboard = (props) => {
         return (prev -= 1);
       });
     }
-  }, [setCountDown, timer, beginSimulation, setTimerFinished]);
+  }, [setCountDown, timer, beginSimulation]);
   return (
     <Box bgcolor="primary.main">
       <Box fontSize={40} fontWeight="bold" color="primary.light">
@@ -62,7 +63,7 @@ export const SurvivalScoreboard = (props) => {
             <Box fontWeight="bold">+</Box>
           </Button>
           <Box fontSize={30} fontWeight="bold" color="primary.light">
-            {numberSurvivors}
+            {numberSurvivors.count}
           </Box>
           <Button
             onClick={handleClickNumSurvivors(0)}
@@ -85,11 +86,7 @@ export const SurvivalScoreboard = (props) => {
         </Box>
       </Box>
       <Box>
-        <SliderSelectorComponent
-          setState={setTimer}
-          setTotalTime={setTotalTime}
-          state={timer}
-        />
+        <SliderSelectorComponent setState={setTimer} state={timer} />
       </Box>
       <Box maxHeight={500} overflow="scroll">
         <Survivors survivorState={survivorState} />

@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { styled } from "@mui/material/styles";
 import { FoodWindow } from "./FoodWindow";
 import { xyCoordinateGenerator } from "./helperFunctions";
-import { NodeWindow } from "./NodeWindow";
-import { ShelterCanvas } from "./ShelterCanvas";
+import { SurvivorWindow } from "./SurvivorWindow";
+import { ShelterWindow } from "./ShelterWindow";
 import { desertBG, mountainsBG, underwaterBG } from "../../media";
 
+//create component before render
 const CanvasWrapper = styled("div")(() => {
   return {
     backgroundRepeat: "no-repeat",
@@ -25,14 +26,13 @@ const CanvasWrapper = styled("div")(() => {
 
 export const CanvasContainer = (props) => {
   const { environmentsPath } = props;
+  const { timer } = props;
   const [allCanvasDetails, setAllCanvasDetails] = useState(null);
   const [foodStateArray, setFoodStateArray] = useState(Array(7).fill(false));
   const [shelterStateArray, setShelterStateArray] = useState(
     Array(7).fill(false)
   );
-  const { totalTime } = props;
   const { beginSimulation } = props;
-  const { numberSurvivors } = props;
   const { setSurvivorState } = props;
 
   const canvasContainer = useRef(null);
@@ -73,29 +73,25 @@ export const CanvasContainer = (props) => {
     >
       {allCanvasDetails && (
         <div>
-          <NodeWindow
-            shelterState={allCanvasDetails.shelterStateXY}
-            setAllCanvasDetails={setAllCanvasDetails}
-            foodState={allCanvasDetails.foodStateXY}
+          <SurvivorWindow
+            shelterStateXY={allCanvasDetails.shelterStateXY}
+            foodStateXY={allCanvasDetails.foodStateXY}
             survivorStateXY={allCanvasDetails.survivorStateXY}
             setFoodStateArray={setFoodStateArray}
             setShelterStateArray={setShelterStateArray}
             canvasDimensions={allCanvasDetails.canvasDimensions}
-            totalTime={totalTime}
             beginSimulation={beginSimulation}
-            numberSurvivors={numberSurvivors}
             setSurvivorState={setSurvivorState}
+            timer={timer}
           />
           <FoodWindow
-            setAllCanvasDetails={setAllCanvasDetails}
-            foodState={allCanvasDetails.foodStateXY}
+            foodStateXY={allCanvasDetails.foodStateXY}
             foodStateArray={foodStateArray}
             setFoodStateArray={setFoodStateArray}
             canvasDimensions={allCanvasDetails.canvasDimensions}
           />
-          <ShelterCanvas
-            shelterState={allCanvasDetails.shelterStateXY}
-            setAllCanvasDetails={setAllCanvasDetails}
+          <ShelterWindow
+            shelterStateXY={allCanvasDetails.shelterStateXY}
             shelterStateArray={shelterStateArray}
             setShelterStateArray={setShelterStateArray}
             canvasDimensions={allCanvasDetails.canvasDimensions}
