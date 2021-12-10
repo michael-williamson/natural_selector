@@ -61,7 +61,7 @@ export const SurvivorWindow = (props) => {
 
   //this useEffect must only fire once per render, rather than using certain states replica modeled data is created
   useEffect(() => {
-    if (!beginSimulation) return;
+    if (!beginSimulation.start) return;
     let start;
     const context = contextRef.current;
     //for now padding to keep icons on page
@@ -196,6 +196,10 @@ export const SurvivorWindow = (props) => {
           ) {
             survivorStateArray[survivorIndex].remove();
             survivorStateArray[survivorIndex].removed = true;
+            setSurvivorState((prev) => {
+              prev[survivorIndex].eliminated = true;
+              return [...prev];
+            });
           }
           // first check only needs to apply to one loop
           if (survivorIndex === survivorStateXY.length - 1) {
@@ -210,6 +214,10 @@ export const SurvivorWindow = (props) => {
           ) {
             survivorStateArray[survivorIndex].remove();
             survivorStateArray[survivorIndex].removed = true;
+            setSurvivorState((prev) => {
+              prev[survivorIndex].eliminated = true;
+              return [...prev];
+            });
           }
           // second check only needs to apply to one loop
           if (survivorIndex === survivorStateXY.length - 1) {
@@ -219,9 +227,10 @@ export const SurvivorWindow = (props) => {
         if (!survivorStateArray[survivorIndex].removed) {
           survivorStateArray[survivorIndex].update();
         }
+        //end of main forEach Loop
       });
 
-      //shorter array indicates value was intercepted
+      //shorter array indicates value was intercepted, update arrays after main loop complete
       if (
         foodStateLength > updatedFoodState.length ||
         shelterStateLength > updatedShelterState.length

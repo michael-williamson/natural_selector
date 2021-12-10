@@ -7,27 +7,44 @@ import { HelpDialogComponent } from "../reusableComponents/HelpDialogComponent";
 import { SliderSelectorComponent } from "../reusableComponents/SliderSelectorComponent";
 
 export const SurvivalScoreboard = (props) => {
-  const { handleClickSimulation } = props;
+  const { handleSimulation } = props;
   const { beginSimulation } = props;
+  const { setBeginSimulation } = props;
   const { handleClickNumSurvivors } = props;
   const { numberSurvivors } = props;
   const { survivorState } = props;
   const { timer, setTimer } = props;
   const [countDown, setCountDown] = useState(30);
+  const [countDownFinished, setCountDownFinished] = useState(false);
 
   useEffect(() => {
-    if (!beginSimulation) return;
+    if (!beginSimulation.start) return;
     const clearCountDown = setInterval(countDownFN, 1000);
     function countDownFN() {
       setCountDown((prev) => {
         if (prev === 1) {
           clearInterval(clearCountDown);
+          setCountDownFinished(true);
           return timer;
         }
         return (prev -= 1);
       });
     }
   }, [setCountDown, timer, beginSimulation]);
+
+  useEffect(() => {
+    countDownFinished &&
+      setBeginSimulation((prev) => {
+        prev.start = false;
+        prev.finished = true;
+        return { ...prev };
+      });
+  }, [countDownFinished, setBeginSimulation]);
+
+  useEffect(() => {
+    beginSimulation.finished && setCountDownFinished(false);
+  }, [beginSimulation.finished]);
+
   return (
     <Box bgcolor="primary.main">
       <Box fontSize={40} fontWeight="bold" color="primary.light">
@@ -36,7 +53,7 @@ export const SurvivalScoreboard = (props) => {
       <Box py={2}>
         <Button
           variant="contained"
-          onClick={handleClickSimulation}
+          onClick={handleSimulation(true, false)}
           color="success"
         >
           <Box fontWeight="bold">Begin Simulation</Box>

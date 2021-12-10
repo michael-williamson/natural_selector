@@ -12,7 +12,6 @@ const CanvasWrapper = styled("div")(() => {
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     position: "relative",
-    height: "800px",
     width: "100%",
     "&::after": {
       position: "absolute",
@@ -27,6 +26,7 @@ const CanvasWrapper = styled("div")(() => {
 export const CanvasContainer = (props) => {
   const { environmentsPath } = props;
   const { timer } = props;
+  const { infoBannerRef } = props;
   const [allCanvasDetails, setAllCanvasDetails] = useState(null);
   const [foodStateArray, setFoodStateArray] = useState(Array(7).fill(false));
   const [shelterStateArray, setShelterStateArray] = useState(
@@ -44,17 +44,19 @@ export const CanvasContainer = (props) => {
   };
 
   useEffect(() => {
+    if (!infoBannerRef) return;
     const currentDiv = canvasContainer.current;
     let cHeight = currentDiv.clientHeight;
     let cWidth = currentDiv.clientWidth;
-    // let offsetHeight = window.innerHeight - cHeight;
+    console.log(infoBannerRef, "info ref");
+    const currentInfoBanner = infoBannerRef.current;
+    const offsetHeight = window.innerHeight - currentInfoBanner.clientHeight;
     let offsetWidth = window.innerWidth - cWidth;
     offsetWidth = offsetWidth - 20;
     setAllCanvasDetails({
       canvasDimensions: {
         canvasX: offsetWidth,
-        canvasHeight: 800,
-        // canvasHeight: cHeight,
+        canvasHeight: offsetHeight,
         canvasWidth: cWidth,
         buffer: 60,
       },
@@ -62,14 +64,21 @@ export const CanvasContainer = (props) => {
       foodStateXY: xyCoordinateGenerator(7, cWidth - 50, cHeight - 50),
       survivorStateXY: xyCoordinateGenerator(10, cWidth, cHeight, 60),
     });
-  }, []);
+  }, [infoBannerRef]);
 
   return (
     <CanvasWrapper
       className="canvasContainer"
       id="canvasContainer"
       ref={canvasContainer}
-      style={{ backgroundImage: `url(${bgImageObject[environmentsPath]})` }}
+      style={{
+        backgroundImage: `url(${bgImageObject[environmentsPath]})`,
+        height: `${
+          infoBannerRef.current
+            ? window.innerHeight - infoBannerRef?.current.clientHeight
+            : "500"
+        }px`,
+      }}
     >
       {allCanvasDetails && (
         <div>

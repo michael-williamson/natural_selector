@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Grid } from "@mui/material";
-import { useState } from "react";
 import { InfoBanner } from "../infoBannerComponents/InfoBanner";
 import { CanvasContainer } from "../nodeComponents/CanvasContainer";
 import { SurvivalScoreboard } from "../survivalScoreboardComponents/SurvivalScoreboard";
@@ -10,13 +9,18 @@ export const AppPage = (props) => {
   const { environmentsPath } = props;
   //default is 30 seconds for timer
   const [timer, setTimer] = useState(30);
-  const [beginSimulation, setBeginSimulation] = useState(false);
+  const [beginSimulation, setBeginSimulation] = useState({
+    start: false,
+    finished: false,
+  });
   //default number of survivors is 10
   const [numberSurvivors, setNumberSurvivors] = useState({
     count: 10,
     max: 10,
   });
   const [survivorState, setSurvivorState] = useState(survivorStateFN(10));
+
+  const infoBannerRef = useRef(null);
 
   const handleClickNumSurvivors = (input) => (event) => {
     setNumberSurvivors((prev) => {
@@ -45,16 +49,22 @@ export const AppPage = (props) => {
     });
   };
 
-  const handleClickSimulation = () => {
-    setBeginSimulation(true);
+  const handleSimulation = (start, finished) => () => {
+    console.log("running sim");
+    setBeginSimulation((prev) => {
+      prev.start = start;
+      prev.finished = finished;
+      return { ...prev };
+    });
   };
 
   return (
     <Grid container>
       <Grid item xs={2}>
         <SurvivalScoreboard
-          handleClickSimulation={handleClickSimulation}
+          handleSimulation={handleSimulation}
           beginSimulation={beginSimulation}
+          setBeginSimulation={setBeginSimulation}
           handleClickNumSurvivors={handleClickNumSurvivors}
           setTimer={setTimer}
           timer={timer}
@@ -68,10 +78,13 @@ export const AppPage = (props) => {
           numberSurvivors={numberSurvivors}
           setSurvivorState={setSurvivorState}
           environmentsPath={environmentsPath}
+          infoBannerRef={infoBannerRef}
+          timer={timer}
         />
         <InfoBanner
           beginSimulation={beginSimulation}
           survivorState={survivorState}
+          infoBannerRef={infoBannerRef}
         />
       </Grid>
     </Grid>

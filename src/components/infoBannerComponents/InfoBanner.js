@@ -7,6 +7,36 @@ import { ImageComponent } from "../reusableComponents/ImageComponent";
 export const InfoBanner = (props) => {
   const { beginSimulation } = props;
   const { survivorState } = props;
+  const { infoBannerRef } = props;
+
+  const PlaceHolderTemplate = () => {
+    return (
+      <Box
+        color={theme.palette.primary.light}
+        fontSize={40}
+        fontWeight="bold"
+        p={2}
+        border={2}
+        borderColor={theme.palette.primary.light}
+        mx={2}
+        borderRadius={2}
+        visibility="hidden"
+      >
+        <Box bgcolor="primary.main" fontSize={40} p={2} borderRadius={2}>
+          Survivor ?
+        </Box>
+        <Box fontSize={20}>
+          <Box>Food Count:</Box>
+        </Box>
+        <Box fontSize={20}>
+          <Box>Fur Count:</Box>
+        </Box>
+        <Box fontSize={20}>
+          <Box>Shelter Count:</Box>
+        </Box>
+      </Box>
+    );
+  };
 
   const printResults = () => {
     return survivorState.map((item, index) => {
@@ -30,7 +60,7 @@ export const InfoBanner = (props) => {
             p={2}
             borderRadius={2}
           >{`Survivor #${index + 1}`}</Box>
-          <Box fontSize={20}>
+          <Box fontSize={20} display="flex">
             <Box>Food Count:</Box>
             <ImageComponent
               image={meatIcon}
@@ -38,7 +68,7 @@ export const InfoBanner = (props) => {
               alt="meat"
             />
           </Box>
-          <Box fontSize={20}>
+          <Box fontSize={20} display="flex">
             <Box>Fur Count:</Box>
             <ImageComponent
               image={furIcon}
@@ -46,7 +76,7 @@ export const InfoBanner = (props) => {
               alt="animal fur"
             />
           </Box>
-          <Box fontSize={20}>
+          <Box fontSize={20} display="flex">
             <Box>Shelter Count:</Box>
             <ImageComponent
               image={caveIcon}
@@ -60,7 +90,7 @@ export const InfoBanner = (props) => {
   };
 
   return (
-    <Box>
+    <Box ref={infoBannerRef}>
       <Box
         width="100%"
         bgcolor="text.disabled"
@@ -87,7 +117,7 @@ export const InfoBanner = (props) => {
           py={4}
           display="flex"
         >
-          {!beginSimulation ? printResults() : "...awaiting results"}
+          {beginSimulation.finished ? printResults() : <PlaceHolderTemplate />}
         </Box>
       </Box>
     </Box>

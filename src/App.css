@@ -7,11 +7,6 @@ a {
   color: white;
 }
 
-.canvasContainer {
-  height: 800px;
-  width: 100%;
-}
-
 canvas {
   position: absolute;
   left: 0;
