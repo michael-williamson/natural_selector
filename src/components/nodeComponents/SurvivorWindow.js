@@ -27,7 +27,6 @@ export const SurvivorWindow = (props) => {
     canvas.style.overflow = "hidden";
     const context = canvas.getContext("2d");
     contextRef.current = context;
-
     function Survivor(x, y, dx, dy) {
       this.x = x;
       this.y = y;
@@ -52,11 +51,13 @@ export const SurvivorWindow = (props) => {
           : maxVelocity;
       survivorStateArray.push(new Survivor(item.x, item.y, vx, vy));
     });
+    context.clearRect(0, 0, canvas.width, canvas.height);
     survivorStateArray.forEach((item) => item.draw());
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
     survivorStateXY,
+    survivorStateXY.length,
   ]);
 
   //this useEffect must only fire once per render, rather than using certain states replica modeled data is created

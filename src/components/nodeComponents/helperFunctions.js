@@ -48,3 +48,26 @@ export const xyCoordinateGenerator = (
   }
   return nodeArray;
 };
+
+export const xyCoordinateObject = (canvasWidth, canvasHeight, buffer) => {
+  let x = Math.random() * canvasWidth;
+  let y = Math.random() * canvasHeight;
+  x = Math.floor(x);
+  y = Math.floor(y);
+
+  function XYObject(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  const bufferedWidth = canvasWidth - buffer;
+  const bufferedHeight = canvasHeight - buffer;
+  const bufferSquared = buffer * 2;
+  if (x >= bufferedWidth || x <= buffer) {
+    x = x >= bufferedWidth ? x - bufferSquared : x + bufferSquared;
+  }
+  if (y >= bufferedHeight || y <= buffer) {
+    y = y >= bufferedHeight ? y - bufferSquared : y + bufferSquared;
+  }
+  return new XYObject(x, y);
+};

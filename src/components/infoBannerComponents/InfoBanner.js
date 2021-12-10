@@ -93,7 +93,7 @@ export const InfoBanner = (props) => {
     <Box ref={infoBannerRef}>
       <Box
         width="100%"
-        bgcolor="text.disabled"
+        bgcolor="primary.main"
         color={theme.palette.primary.light}
         fontSize={40}
         fontWeight="bold"
@@ -102,7 +102,7 @@ export const InfoBanner = (props) => {
         border={2}
         borderRadius={2}
       >
-        List of Survivors:
+        List of Survivors
       </Box>
       <Box
         bgcolor="info.main"

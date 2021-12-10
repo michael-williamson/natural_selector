@@ -23,39 +23,49 @@ export const AppPage = (props) => {
   const infoBannerRef = useRef(null);
 
   const handleClickNumSurvivors = (input) => (event) => {
+    if (input && numberSurvivors.count === numberSurvivors.max) return;
+    if (!input && numberSurvivors.count === 0) return;
+
     setNumberSurvivors((prev) => {
       if (input) {
         let currentNum = prev.count + 1;
-        currentNum < prev.max &&
-          setSurvivorState((prev) => {
-            prev.push({
-              foodCount: 0,
-              shelterCount: 0,
-              furCount: 0,
-              eliminated: false,
-            });
-            return [...prev];
-          });
-        return currentNum >= 9 ? 10 : currentNum;
+        prev.count = prev.count >= 9 ? 10 : currentNum;
+        return { ...prev };
       } else {
-        let currentNum = prev - 1;
-        currentNum > 0 &&
-          setSurvivorState((prev) => {
-            prev.pop();
-            return [...prev];
-          });
-        return currentNum <= 0 ? 1 : currentNum;
+        let currentNum = prev.count - 1;
+        prev.count = prev.count <= 0 ? 1 : currentNum;
+        return { ...prev };
       }
     });
+
+    input
+      ? setSurvivorState((prev) => {
+          const update = [...prev];
+          update.push({
+            foodCount: 0,
+            shelterCount: 0,
+            furCount: 0,
+            eliminated: false,
+          });
+          return update;
+        })
+      : setSurvivorState((prev) => {
+          const update = [...prev];
+          update.pop();
+          return update;
+        });
   };
 
   const handleSimulation = (start, finished) => () => {
-    console.log("running sim");
     setBeginSimulation((prev) => {
       prev.start = start;
       prev.finished = finished;
       return { ...prev };
     });
+
+    !start &&
+      !finished &&
+      setSurvivorState(survivorStateFN(numberSurvivors.count));
   };
 
   return (

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { styled } from "@mui/material/styles";
 import { FoodWindow } from "./FoodWindow";
-import { xyCoordinateGenerator } from "./helperFunctions";
+import { xyCoordinateGenerator, xyCoordinateObject } from "./helperFunctions";
 import { SurvivorWindow } from "./SurvivorWindow";
 import { ShelterWindow } from "./ShelterWindow";
 import { desertBG, mountainsBG, underwaterBG } from "../../media";
@@ -27,11 +27,10 @@ export const CanvasContainer = (props) => {
   const { environmentsPath } = props;
   const { timer } = props;
   const { infoBannerRef } = props;
+  const { numberSurvivors } = props;
   const [allCanvasDetails, setAllCanvasDetails] = useState(null);
-  const [foodStateArray, setFoodStateArray] = useState(Array(7).fill(false));
-  const [shelterStateArray, setShelterStateArray] = useState(
-    Array(7).fill(false)
-  );
+  const [foodStateArray, setFoodStateArray] = useState(null);
+  const [shelterStateArray, setShelterStateArray] = useState(null);
   const { beginSimulation } = props;
   const { setSurvivorState } = props;
 
@@ -44,15 +43,40 @@ export const CanvasContainer = (props) => {
   };
 
   useEffect(() => {
-    if (!infoBannerRef) return;
     const currentDiv = canvasContainer.current;
     let cHeight = currentDiv.clientHeight;
     let cWidth = currentDiv.clientWidth;
-    console.log(infoBannerRef, "info ref");
+
+    setAllCanvasDetails((prev) => {
+      console.log(prev, "what is canvas details");
+      if (prev === null) return prev;
+      const length = prev.survivorStateXY.length;
+      const count = numberSurvivors.count;
+      if (count < length) {
+        prev.survivorStateXY.pop();
+        return { ...prev };
+      } else if (count > length) {
+        prev.survivorStateXY.push(xyCoordinateObject(cWidth, cHeight, 60));
+        return { ...prev };
+      }
+      return { ...prev };
+    });
+  }, [numberSurvivors.count]);
+
+  useEffect(() => {
+    if (!infoBannerRef) return;
+    if (beginSimulation.start || beginSimulation.finished) return;
+    const currentDiv = canvasContainer.current;
+    let cHeight = currentDiv.clientHeight;
+    let cWidth = currentDiv.clientWidth;
     const currentInfoBanner = infoBannerRef.current;
     const offsetHeight = window.innerHeight - currentInfoBanner.clientHeight;
     let offsetWidth = window.innerWidth - cWidth;
     offsetWidth = offsetWidth - 20;
+
+    setFoodStateArray(Array(7).fill(false));
+    setShelterStateArray(Array(7).fill(false));
+
     setAllCanvasDetails({
       canvasDimensions: {
         canvasX: offsetWidth,
@@ -64,7 +88,7 @@ export const CanvasContainer = (props) => {
       foodStateXY: xyCoordinateGenerator(7, cWidth - 50, cHeight - 50),
       survivorStateXY: xyCoordinateGenerator(10, cWidth, cHeight, 60),
     });
-  }, [infoBannerRef]);
+  }, [infoBannerRef, beginSimulation.start, beginSimulation.finished]);
 
   return (
     <CanvasWrapper

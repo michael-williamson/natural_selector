@@ -55,8 +55,18 @@ export const SurvivalScoreboard = (props) => {
           variant="contained"
           onClick={handleSimulation(true, false)}
           color="success"
+          disabled={beginSimulation.start || beginSimulation.finished}
         >
           <Box fontWeight="bold">Begin Simulation</Box>
+        </Button>
+      </Box>
+      <Box>
+        <Button
+          variant="contained"
+          onClick={handleSimulation(false, false)}
+          color="error"
+        >
+          <Box fontWeight="bold">Reset</Box>
         </Button>
       </Box>
       <Box py={4}>
@@ -76,6 +86,7 @@ export const SurvivalScoreboard = (props) => {
             onClick={handleClickNumSurvivors(1)}
             variant="contained"
             color="success"
+            disabled={beginSimulation.start || beginSimulation.finished}
           >
             <Box fontWeight="bold">+</Box>
           </Button>
@@ -86,6 +97,7 @@ export const SurvivalScoreboard = (props) => {
             onClick={handleClickNumSurvivors(0)}
             variant="contained"
             color="success"
+            disabled={beginSimulation.start || beginSimulation.finished}
           >
             <Box fontWeight="bold">-</Box>
           </Button>
