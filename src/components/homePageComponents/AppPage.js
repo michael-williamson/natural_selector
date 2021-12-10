@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { InfoBanner } from "../infoBannerComponents/InfoBanner";
 import { CanvasContainer } from "../nodeComponents/CanvasContainer";
 import { SurvivalScoreboard } from "../survivalScoreboardComponents/SurvivalScoreboard";
@@ -9,15 +9,11 @@ import { survivorStateFN } from "../../helperFunctions";
 export const AppPage = (props) => {
   const { environmentsPath } = props;
   const [timer, setTimer] = useState(30);
-  const [totalTime, setTotalTime] = useState(null);
+  const [totalTime, setTotalTime] = useState(30);
   const [beginSimulation, setBeginSimulation] = useState(false);
   const [numberSurvivors, setNumberSurvivors] = useState(10);
   const [survivorState, setSurvivorState] = useState(survivorStateFN(10));
   const [timerFinished, setTimerFinished] = useState(false);
-
-  useEffect(() => {
-    setTotalTime(timer);
-  }, [timer]);
 
   const handleClickNumSurvivors = (input) => (event) => {
     setNumberSurvivors((prev) => {
@@ -48,27 +44,18 @@ export const AppPage = (props) => {
 
   const handleClickSimulation = () => {
     setBeginSimulation(true);
-    let endTimer = setInterval(countDownFN, 1000);
-    function countDownFN() {
-      setTimer((prev) => {
-        if (prev === 1) {
-          clearInterval(endTimer);
-          setBeginSimulation(false);
-          setTimerFinished(true);
-          return 30;
-        }
-        return prev - 1;
-      });
-    }
   };
   return (
     <Grid container>
       <Grid item xs={2}>
         <SurvivalScoreboard
           handleClickSimulation={handleClickSimulation}
+          beginSimulation={beginSimulation}
           handleClickNumSurvivors={handleClickNumSurvivors}
           setTimer={setTimer}
+          setTotalTime={setTotalTime}
           timer={timer}
+          setTimerFinished={setTimerFinished}
           numberSurvivors={numberSurvivors}
           survivorState={survivorState}
         />
@@ -78,7 +65,6 @@ export const AppPage = (props) => {
           totalTime={totalTime}
           beginSimulation={beginSimulation}
           numberSurvivors={numberSurvivors}
-          survivorState={survivorState}
           setSurvivorState={setSurvivorState}
           environmentsPath={environmentsPath}
         />

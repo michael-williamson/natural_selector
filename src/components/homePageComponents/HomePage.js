@@ -38,10 +38,10 @@ export const HomePage = (props) => {
                   <img src={dnaIcon} alt="dna" />
                 </Box>
                 <Box>
-                  <img src={grassIcon} alt="dna" />
+                  <img src={grassIcon} alt="grass" />
                 </Box>
                 <Box>
-                  <img src={waterIcon} alt="dna" />
+                  <img src={waterIcon} alt="water" />
                 </Box>
               </Box>
             </Grid>
@@ -57,7 +57,7 @@ export const HomePage = (props) => {
                   borderRadius={5}
                 >
                   Simulations performed in a variety of environments to
-                  determine what genetics get to live on and continue a species
+                  determine what genetics get to live and continue a species
                 </Box>
               </Grid>
               <Grid item>
@@ -92,23 +92,25 @@ export const HomePage = (props) => {
           </Grid>
 
           <MenuComponent
-            environmentsPath={environmentsPath}
             setEnvironmentsPath={setEnvironmentsPath}
             environmentPathObject={environmentPathObject}
           />
           <Grid item xs={10}>
             <Button>
-              <Box
-                fontWeight="bold"
-                fontSize={20}
-                color="secondary.main"
-                px={4}
-                my={2}
-                bgcolor="primary.main"
-                borderRadius={5}
-              >
-                <Link to="environments">Go!</Link>
-              </Box>
+              <Link to="environments">
+                <Box
+                  px={4}
+                  my={2}
+                  bgcolor="primary.main"
+                  borderRadius={5}
+                  fontWeight="bold"
+                >
+                  <Box>{environmentsPath} Canvas</Box>
+                  <Box fontWeight="bold" fontSize={20} color="secondary.main">
+                    Click to Start!
+                  </Box>
+                </Box>
+              </Link>
             </Button>
           </Grid>
         </Grid>

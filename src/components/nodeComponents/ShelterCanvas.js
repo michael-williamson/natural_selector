@@ -1,11 +1,13 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import caveShelter from "../../media/icons/cave_shelter.png";
+
+const icon = new Image();
+icon.src = caveShelter;
 
 export const ShelterCanvas = (props) => {
   const { shelterState } = props;
   const { shelterStateArray } = props;
   const { canvasDimensions } = props;
-  const [nodeObject, setNodeObject] = useState(null);
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
@@ -19,37 +21,26 @@ export const ShelterCanvas = (props) => {
     const context = canvas.getContext("2d");
     contextRef.current = context;
 
-    const icon = new Image();
-    icon.src = caveShelter;
-
-    function Node(x, y) {
-      this.x = x;
-      this.y = y;
-
-      this.draw = function () {
-        context.drawImage(icon, this.x, this.y, 40, 40);
-      };
-      this.update = function () {
-        context.clearRect(this.x, this.y, 40, 40);
-      };
-    }
-
-    const nodeArray = [];
     shelterState.forEach((item) => {
-      nodeArray.push(new Node(item.x, item.y));
+      contextRef.current.drawImage(icon, item.x, item.y, 40, 40);
     });
-    nodeArray.forEach((item) => item.draw());
-    setNodeObject(nodeArray);
-  }, []);
+  }, [
+    canvasDimensions.canvasHeight,
+    canvasDimensions.canvasWidth,
+    shelterState,
+  ]);
 
   useEffect(() => {
-    shelterStateArray &&
-      nodeObject &&
-      shelterStateArray.forEach((item, index) => {
-        if (item) {
-          nodeObject[index].update();
-        }
-      });
-  }, [shelterStateArray, nodeObject]);
+    shelterStateArray.forEach((item, index) => {
+      if (item) {
+        contextRef.current.clearRect(
+          shelterState[index].x,
+          shelterState[index].y,
+          40,
+          40
+        );
+      }
+    });
+  }, [shelterStateArray, shelterState]);
   return <canvas ref={canvasRef} id="shelterCanvas"></canvas>;
 };

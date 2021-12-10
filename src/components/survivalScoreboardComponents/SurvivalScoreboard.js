@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@mui/system";
 import { Button } from "@mui/material";
 import { Survivors } from "./Survivors";
@@ -8,10 +8,25 @@ import { SliderSelectorComponent } from "../reusableComponents/SliderSelectorCom
 
 export const SurvivalScoreboard = (props) => {
   const { handleClickSimulation } = props;
+  const { beginSimulation } = props;
   const { handleClickNumSurvivors } = props;
   const { numberSurvivors } = props;
   const { survivorState } = props;
-  const { timer, setTimer } = props;
+  const { timer, setTimer, setTotalTime, setTimerFinished } = props;
+  const [countDown, setCountDown] = useState(30);
+  useEffect(() => {
+    if (!beginSimulation) return;
+    const clearCountDown = setInterval(countDownFN, 1000);
+    function countDownFN() {
+      setCountDown((prev) => {
+        if (prev === 1) {
+          clearInterval(clearCountDown);
+          return timer;
+        }
+        return (prev -= 1);
+      });
+    }
+  }, [setCountDown, timer, beginSimulation, setTimerFinished]);
   return (
     <Box bgcolor="primary.main">
       <Box fontSize={40} fontWeight="bold" color="primary.light">
@@ -63,14 +78,18 @@ export const SurvivalScoreboard = (props) => {
           Timer:
         </Box>
         <Box fontSize={30} fontWeight="bold" color="primary.light" px={2}>
-          {timer || 30}
+          {countDown}
         </Box>
         <Box fontSize={20} fontWeight="bold" color="primary.light">
           seconds
         </Box>
       </Box>
       <Box>
-        <SliderSelectorComponent setState={setTimer} state={timer} />
+        <SliderSelectorComponent
+          setState={setTimer}
+          setTotalTime={setTotalTime}
+          state={timer}
+        />
       </Box>
       <Box maxHeight={500} overflow="scroll">
         <Survivors survivorState={survivorState} />

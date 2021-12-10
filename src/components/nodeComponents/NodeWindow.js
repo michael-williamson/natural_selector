@@ -1,6 +1,9 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import dnaIcon from "../../media/icons/dna_helix.png";
 import { getDistance } from "./helperFunctions";
+
+const icon = new Image();
+icon.src = dnaIcon;
 
 export const NodeWindow = (props) => {
   const { shelterState } = props;
@@ -14,25 +17,80 @@ export const NodeWindow = (props) => {
   const { setSurvivorState } = props;
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
-  const [survivorArrayState, setSurvivorArrayState] = useState([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     let canvasWidth = canvasDimensions.canvasWidth;
     let canvasHeight = canvasDimensions.canvasHeight;
-    const buffer = canvasDimensions.buffer;
-    const bufferedWidth = canvasDimensions.canvasWidth - buffer;
-    const bufferedHeight = canvasDimensions.canvasHeight - buffer;
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvas.style.overflow = "hidden";
     const context = canvas.getContext("2d");
     contextRef.current = context;
 
-    const icon = new Image();
-    icon.src = dnaIcon;
+    function Survivor(x, y, dx, dy) {
+      this.x = x;
+      this.y = y;
+      this.dx = dx;
+      this.dy = dy;
+      this.removed = false;
 
-    function Node(x, y, dx, dy) {
+      this.draw = function () {
+        context.drawImage(icon, this.x, this.y, 60, 60);
+      };
+    }
+
+    const survivorStateArray = [];
+    survivorStateXY.forEach((item) => {
+      let maxVelocity = 2;
+      const velocityArray = [0, maxVelocity];
+      let vx = velocityArray[Math.floor(Math.random() * 2)];
+      let vy =
+        vx === maxVelocity
+          ? velocityArray[Math.floor(Math.random() * 2)]
+          : maxVelocity;
+      survivorStateArray.push(new Survivor(item.x, item.y, vx, vy));
+    });
+    survivorStateArray.forEach((item) => item.draw());
+  }, [
+    canvasDimensions.canvasHeight,
+    canvasDimensions.canvasWidth,
+    survivorStateXY,
+  ]);
+
+  useEffect(() => {
+    if (!beginSimulation) return;
+    let start;
+    const context = contextRef.current;
+    const buffer = canvasDimensions.buffer;
+    const bufferedWidth = canvasDimensions.canvasWidth - buffer;
+    const bufferedHeight = canvasDimensions.canvasHeight - buffer;
+    const canvas = canvasRef.current;
+
+    let countDown = totalTime;
+    let firstCheck = false;
+    let secondCheck = false;
+
+    const timerID = setInterval(() => {
+      if (countDown <= 15 && !firstCheck) {
+        firstCheck = true;
+      } else if (countDown <= 5 && !secondCheck) {
+        secondCheck = true;
+      }
+      countDown = countDown -= 1;
+      if (countDown <= 0) {
+        clearInterval(timerID);
+      }
+    }, 1000);
+
+    function SurvivorCount() {
+      this.foodCount = 0;
+      this.shelterCount = 0;
+      this.furCount = 0;
+      this.eliminated = false;
+    }
+
+    function Survivor(x, y, dx, dy) {
       this.x = x;
       this.y = y;
       this.dx = dx;
@@ -57,8 +115,9 @@ export const NodeWindow = (props) => {
         context.clearRect(this.x, this.y, 60, 60);
       };
     }
+    const survivorStateArray = [];
+    const survivorCountArray = [];
 
-    const nodeArray = [];
     survivorStateXY.forEach((item) => {
       let maxVelocity = 2;
       const velocityArray = [0, maxVelocity];
@@ -67,43 +126,10 @@ export const NodeWindow = (props) => {
         vx === maxVelocity
           ? velocityArray[Math.floor(Math.random() * 2)]
           : maxVelocity;
-      nodeArray.push(new Node(item.x, item.y, vx, vy));
+      survivorStateArray.push(new Survivor(item.x, item.y, vx, vy));
+      survivorCountArray.push(new SurvivorCount());
     });
-    setSurvivorArrayState(nodeArray);
-    nodeArray.forEach((item) => item.draw());
-  }, []);
 
-  useEffect(() => {
-    let start;
-    const context = contextRef.current;
-    const canvas = canvasRef.current;
-    const nodeArray = [...survivorArrayState];
-    const nodeStateArray = [];
-    let countDown = totalTime;
-    let firstCheck = false;
-    let secondCheck = false;
-
-    const timerID = setInterval(() => {
-      if (countDown <= 15 && !firstCheck) {
-        firstCheck = true;
-      } else if (countDown <= 5 && !secondCheck) {
-        secondCheck = true;
-      }
-      countDown = countDown -= 1;
-      if (countDown <= 0) {
-        clearInterval(timerID);
-      }
-    }, 1000);
-
-    function NodeState() {
-      this.foodCount = 0;
-      this.shelterCount = 0;
-      this.furCount = 0;
-      this.eliminated = false;
-    }
-    nodeArray.forEach(() => {
-      nodeStateArray.push(new NodeState());
-    });
     const foodStateBoolArray = Array(7).fill(false);
     const shelterStateBoolArray = Array(7).fill(false);
     let foodStateLength = 7;
@@ -118,15 +144,19 @@ export const NodeWindow = (props) => {
       }
       context.clearRect(0, 0, canvas.width, canvas.height);
       let updatedFoodState, updatedShelterState;
-      for (let i = 0; i < nodeArray.length; i++) {
+      survivorStateArray.forEach((survivorItem, survivorIndex) => {
         updatedFoodState = foodState.filter((item, index) => {
           if (foodStateBoolArray[index]) {
             return false;
           } else if (
-            getDistance(item.x, item.y, nodeArray[i].x, nodeArray[i].y) < 50
+            getDistance(item.x, item.y, survivorItem.x, survivorItem.y) < 50
           ) {
             foodStateBoolArray[index] = true;
-            nodeStateArray[i].foodCount = nodeStateArray[i].foodCount += 1;
+            survivorCountArray[survivorIndex].foodCount += 1;
+            setSurvivorState((prev) => {
+              prev[survivorIndex].foodCount += 1;
+              return [...prev];
+            });
             return false;
           }
           return true;
@@ -135,12 +165,14 @@ export const NodeWindow = (props) => {
           if (shelterStateBoolArray[index]) {
             return false;
           } else if (
-            getDistance(item.x, item.y, nodeArray[i].x, nodeArray[i].y) < 50
+            getDistance(item.x, item.y, survivorItem.x, survivorItem.y) < 50
           ) {
             shelterStateBoolArray[index] = true;
-            nodeStateArray[i].shelterCount = nodeStateArray[
-              i
-            ].shelterCount += 1;
+            survivorCountArray[survivorIndex].shelterCount += 1;
+            setSurvivorState((prev) => {
+              prev[survivorIndex].shelterCount += 1;
+              return [...prev];
+            });
             return false;
           }
           return true;
@@ -148,49 +180,60 @@ export const NodeWindow = (props) => {
 
         if (firstCheck) {
           if (
-            nodeStateArray[i].foodCount < 1 ||
-            nodeStateArray[i].shelterCount < 1
+            survivorCountArray[survivorIndex].foodCount < 1 ||
+            survivorCountArray[survivorIndex].shelterCount < 1
           ) {
-            nodeArray[i].remove();
-            nodeArray[i].removed = true;
-            nodeStateArray[i].eliminated = true;
+            survivorStateArray[survivorIndex].remove();
+            survivorStateArray[survivorIndex].removed = true;
+            survivorCountArray[survivorIndex].eliminated = true;
           }
           // first check only needs to apply to one loop
-          if (i === nodeArray.length - 1) {
+          if (survivorIndex === survivorStateArray.length - 1) {
             firstCheck = false;
           }
         }
         if (secondCheck) {
           if (
-            nodeStateArray[i].foodCount < 1 ||
-            nodeStateArray[i].shelterCount < 1
+            survivorCountArray[survivorIndex].foodCount < 1 ||
+            survivorCountArray[survivorIndex].shelterCount < 1
           ) {
-            nodeArray[i].remove();
-            nodeArray[i].removed = true;
-            nodeStateArray[i].eliminated = true;
+            survivorStateArray[survivorIndex].remove();
+            survivorStateArray[survivorIndex].removed = true;
+            survivorCountArray[survivorIndex].eliminated = true;
           }
           // second check only needs to apply to one loop
-          if (i === nodeArray.length - 1) {
+          if (survivorIndex === survivorStateArray.length - 1) {
             secondCheck = false;
           }
         }
-        if (!nodeArray[i].removed) {
-          nodeArray[i].update();
+        if (!survivorStateArray[survivorIndex].removed) {
+          survivorStateArray[survivorIndex].update();
         }
-      }
+      });
       if (
         foodStateLength > updatedFoodState.length ||
         shelterStateLength > updatedShelterState.length
       ) {
         foodStateLength = updatedFoodState.length;
         shelterStateLength = updatedShelterState.length;
-        setSurvivorState([...nodeStateArray]);
         setFoodStateArray([...foodStateBoolArray]);
         setShelterStateArray([...shelterStateBoolArray]);
       }
     };
-    beginSimulation && window.requestAnimationFrame(animateNodes);
-  }, [beginSimulation, survivorArrayState]);
+    window.requestAnimationFrame(animateNodes);
+  }, [
+    beginSimulation,
+    canvasDimensions.buffer,
+    canvasDimensions.canvasHeight,
+    canvasDimensions.canvasWidth,
+    foodState,
+    setFoodStateArray,
+    setShelterStateArray,
+    setSurvivorState,
+    shelterState,
+    survivorStateXY,
+    totalTime,
+  ]);
 
   return <canvas ref={canvasRef} id="dnaCanvas" />;
 };

@@ -12,7 +12,9 @@ const environmentPathObject = {
 };
 
 function App() {
-  const [environmentsPath, setEnvironmentsPath] = useState("");
+  const [environmentsPath, setEnvironmentsPath] = useState(
+    environmentPathObject.desert
+  );
   return (
     <Grid container className="App" justifyContent="center">
       <Routes>
