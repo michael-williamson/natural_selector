@@ -48,7 +48,6 @@ export const CanvasContainer = (props) => {
     let cWidth = currentDiv.clientWidth;
 
     setAllCanvasDetails((prev) => {
-      console.log(prev, "what is canvas details");
       if (prev === null) return prev;
       const length = prev.survivorStateXY.length;
       const count = numberSurvivors.count;

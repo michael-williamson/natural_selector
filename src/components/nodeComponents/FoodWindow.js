@@ -21,6 +21,8 @@ export const FoodWindow = (props) => {
     const context = canvas.getContext("2d");
     contextRef.current = context;
 
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
     foodStateXY.forEach((item) => {
       contextRef.current.drawImage(icon, item.x, item.y, 40, 40);
     });

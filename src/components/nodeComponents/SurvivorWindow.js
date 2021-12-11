@@ -89,18 +89,20 @@ export const SurvivorWindow = (props) => {
       }
     }, 1000);
 
-    function SurvivorCount() {
+    function SurvivorCount(index) {
       this.foodCount = 0;
       this.shelterCount = 0;
       this.furCount = 0;
+      this.index = index;
     }
 
-    function Survivor(x, y, dx, dy) {
+    function Survivor(x, y, dx, dy, index) {
       this.x = x;
       this.y = y;
       this.dx = dx;
       this.dy = dy;
       this.removed = false;
+      this.index = index;
 
       this.draw = function () {
         context.drawImage(icon, this.x, this.y, 60, 60);
@@ -121,10 +123,10 @@ export const SurvivorWindow = (props) => {
       };
     }
 
-    const survivorStateArray = [];
+    let survivorStateArray = [];
     const survivorCountArray = [];
 
-    survivorStateXY.forEach((item) => {
+    survivorStateXY.forEach((item, index) => {
       let maxVelocity = 2;
       const velocityArray = [0, maxVelocity];
       let vx = velocityArray[Math.floor(Math.random() * 2)];
@@ -132,8 +134,8 @@ export const SurvivorWindow = (props) => {
         vx === maxVelocity
           ? velocityArray[Math.floor(Math.random() * 2)]
           : maxVelocity;
-      survivorStateArray.push(new Survivor(item.x, item.y, vx, vy));
-      survivorCountArray.push(new SurvivorCount());
+      survivorStateArray.push(new Survivor(item.x, item.y, vx, vy, index));
+      survivorCountArray.push(new SurvivorCount(index));
     });
 
     //booleans for index positions of resource icons
@@ -163,9 +165,9 @@ export const SurvivorWindow = (props) => {
             getDistance(item.x, item.y, survivorItem.x, survivorItem.y) < 50
           ) {
             foodStateBoolArray[index] = true;
-            survivorCountArray[survivorIndex].foodCount += 1;
+            survivorCountArray[survivorItem.index].foodCount += 1;
             setSurvivorState((prev) => {
-              prev[survivorIndex].foodCount += 1;
+              prev[survivorItem.index].foodCount += 1;
               return [...prev];
             });
             return false;
@@ -180,9 +182,9 @@ export const SurvivorWindow = (props) => {
             getDistance(item.x, item.y, survivorItem.x, survivorItem.y) < 50
           ) {
             shelterStateBoolArray[index] = true;
-            survivorCountArray[survivorIndex].shelterCount += 1;
+            survivorCountArray[survivorItem.index].shelterCount += 1;
             setSurvivorState((prev) => {
-              prev[survivorIndex].shelterCount += 1;
+              prev[survivorItem.index].shelterCount += 1;
               return [...prev];
             });
             return false;
@@ -190,46 +192,33 @@ export const SurvivorWindow = (props) => {
           return true;
         });
 
-        if (firstCheck) {
-          if (
-            survivorCountArray[survivorIndex].foodCount < 1 ||
-            survivorCountArray[survivorIndex].shelterCount < 1
-          ) {
-            survivorStateArray[survivorIndex].remove();
-            survivorStateArray[survivorIndex].removed = true;
-            setSurvivorState((prev) => {
-              prev[survivorIndex].eliminated = true;
-              return [...prev];
-            });
-          }
-          // first check only needs to apply to one loop
-          if (survivorIndex === survivorStateXY.length - 1) {
-            firstCheck = false;
-          }
-        }
+        survivorItem.update();
 
-        if (secondCheck) {
-          if (
-            survivorCountArray[survivorIndex].foodCount < 1 ||
-            survivorCountArray[survivorIndex].shelterCount < 1
-          ) {
-            survivorStateArray[survivorIndex].remove();
-            survivorStateArray[survivorIndex].removed = true;
-            setSurvivorState((prev) => {
-              prev[survivorIndex].eliminated = true;
-              return [...prev];
-            });
-          }
-          // second check only needs to apply to one loop
-          if (survivorIndex === survivorStateXY.length - 1) {
-            secondCheck = false;
-          }
-        }
-        if (!survivorStateArray[survivorIndex].removed) {
-          survivorStateArray[survivorIndex].update();
-        }
         //end of main forEach Loop
       });
+
+      if (firstCheck || secondCheck) {
+        survivorStateArray = survivorStateArray.filter((item) => {
+          if (
+            survivorCountArray[item.index].foodCount < 1 ||
+            survivorCountArray[item.index].shelterCount < 1
+          ) {
+            setSurvivorState((prev) => {
+              prev[item.index].eliminated = true;
+              return [...prev];
+            });
+            return false;
+          } else {
+            return true;
+          }
+        });
+        // first and second check only needs to apply to one loop
+        if (firstCheck) {
+          firstCheck = false;
+        } else if (secondCheck) {
+          secondCheck = false;
+        }
+      }
 
       //shorter array indicates value was intercepted, update arrays after main loop complete
       if (
