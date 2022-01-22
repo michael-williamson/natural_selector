@@ -25,9 +25,10 @@ export const xyCoordinateGenerator = (
   canvasHeight,
   buffer
 ) => {
-  function XYObject(x, y) {
+  function XYObject(x, y, index) {
     this.x = x;
     this.y = y;
+    this.index = index;
   }
   const nodeArray = [];
   const bufferedWidth = canvasWidth - buffer;
@@ -44,7 +45,7 @@ export const xyCoordinateGenerator = (
     if (y >= bufferedHeight || y <= buffer) {
       y = y >= bufferedHeight ? y - bufferSquared : y + bufferSquared;
     }
-    nodeArray.push(new XYObject(x, y));
+    nodeArray.push(new XYObject(x, y, i));
   }
   return nodeArray;
 };

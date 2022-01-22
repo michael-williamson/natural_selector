@@ -92,8 +92,10 @@ export const HomePage = (props) => {
           </Grid>
 
           <MenuComponent
+            environmentsPath={environmentsPath}
             setEnvironmentsPath={setEnvironmentsPath}
             environmentPathObject={environmentPathObject}
+            dimensions={200}
           />
           <Grid item xs={10}>
             <Button>

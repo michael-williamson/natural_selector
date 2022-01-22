@@ -1,13 +1,15 @@
 import React from "react";
 import { Box } from "@mui/system";
 import { theme } from "../../Theme";
-import { furIcon, meatIcon, caveIcon } from "../../media";
 import { ImageComponent } from "../reusableComponents/ImageComponent";
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+import { HelpDialogComponent } from "../reusableComponents/HelpDialogComponent";
 
 export const InfoBanner = (props) => {
   const { beginSimulation } = props;
   const { survivorState } = props;
   const { infoBannerRef } = props;
+  const { environmentIconObject } = props;
 
   const PlaceHolderTemplate = () => {
     return (
@@ -63,25 +65,33 @@ export const InfoBanner = (props) => {
           <Box fontSize={20} display="flex">
             <Box>Food Count:</Box>
             <ImageComponent
-              image={meatIcon}
               iterations={item.foodCount}
-              alt="meat"
+              image={environmentIconObject.food}
+              alt="food icon"
             />
           </Box>
           <Box fontSize={20} display="flex">
-            <Box>Fur Count:</Box>
+            <Box>Water Count:</Box>
             <ImageComponent
-              image={furIcon}
-              iterations={item.furCount}
-              alt="animal fur"
+              iterations={item.waterCount}
+              image={environmentIconObject.water}
+              alt="water icon"
             />
           </Box>
           <Box fontSize={20} display="flex">
             <Box>Shelter Count:</Box>
             <ImageComponent
-              image={caveIcon}
               iterations={item.shelterCount}
-              alt="cave"
+              image={environmentIconObject.shelter}
+              alt="shelter icon"
+            />
+          </Box>
+          <Box fontSize={20} display="flex">
+            <Box>Adaptation:</Box>
+            <ImageComponent
+              iterations={item.adaptation}
+              image={environmentIconObject.adaptation}
+              alt="adaptation icon"
             />
           </Box>
         </Box>
@@ -95,14 +105,23 @@ export const InfoBanner = (props) => {
         width="100%"
         bgcolor="primary.main"
         color={theme.palette.primary.light}
-        fontSize={40}
         fontWeight="bold"
         borderBottom={2}
         borderColor={theme.palette.primary.light}
         border={2}
         borderRadius={2}
       >
-        List of Survivors
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <Box py={2} fontSize={40} fontWeight="bold" color="primary.light">
+            List of Survivors
+          </Box>
+          <Box pl={2}>
+            <HelpDialogComponent
+              Icon={HelpOutlineOutlinedIcon}
+              messageText="Survivors must acquire at least 1 food, 1 water, and 1 shelter to develop an adaptation.  The adaptation qualifies for survival"
+            />
+          </Box>
+        </Box>
       </Box>
       <Box
         bgcolor="info.main"

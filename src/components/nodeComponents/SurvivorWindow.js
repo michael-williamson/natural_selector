@@ -8,8 +8,10 @@ icon.src = dnaIcon;
 export const SurvivorWindow = (props) => {
   const { shelterStateXY } = props;
   const { foodStateXY } = props;
+  const { waterStateXY } = props;
   const { survivorStateXY } = props;
   const { setFoodStateArray } = props;
+  const { setWaterStateArray } = props;
   const { setShelterStateArray } = props;
   const { canvasDimensions } = props;
   const { beginSimulation } = props;
@@ -91,8 +93,9 @@ export const SurvivorWindow = (props) => {
 
     function SurvivorCount(index) {
       this.foodCount = 0;
+      this.waterCount = 0;
       this.shelterCount = 0;
-      this.furCount = 0;
+      this.adaptation = 0;
       this.index = index;
     }
 
@@ -140,9 +143,15 @@ export const SurvivorWindow = (props) => {
 
     //booleans for index positions of resource icons
     const foodStateBoolArray = Array(foodStateXY.length).fill(false);
+    const waterStateBoolArray = Array(waterStateXY.length).fill(false);
     const shelterStateBoolArray = Array(shelterStateXY.length).fill(false);
 
+    let foodStateArray = [...foodStateXY];
+    let waterStateArray = [...waterStateXY];
+    let shelterStateArray = [...shelterStateXY];
+
     let foodStateLength = foodStateXY.length;
+    let waterStateLength = waterStateXY.length;
     let shelterStateLength = shelterStateXY.length;
 
     const animateNodes = (timestamp) => {
@@ -155,16 +164,14 @@ export const SurvivorWindow = (props) => {
       }
       context.clearRect(0, 0, canvas.width, canvas.height);
 
-      //In this scope variables are available to other fns
-      let updatedFoodState, updatedShelterState;
       survivorStateArray.forEach((survivorItem, survivorIndex) => {
-        updatedFoodState = foodStateXY.filter((item, index) => {
-          if (foodStateBoolArray[index]) {
+        foodStateArray = foodStateArray.filter((item, index) => {
+          if (foodStateBoolArray[item.index]) {
             return false;
           } else if (
             getDistance(item.x, item.y, survivorItem.x, survivorItem.y) < 50
           ) {
-            foodStateBoolArray[index] = true;
+            foodStateBoolArray[item.index] = true;
             survivorCountArray[survivorItem.index].foodCount += 1;
             setSurvivorState((prev) => {
               prev[survivorItem.index].foodCount += 1;
@@ -174,14 +181,30 @@ export const SurvivorWindow = (props) => {
           }
           return true;
         });
-
-        updatedShelterState = shelterStateXY.filter((item, index) => {
-          if (shelterStateBoolArray[index]) {
+        waterStateArray = waterStateArray.filter((item, index) => {
+          if (waterStateBoolArray[item.index]) {
             return false;
           } else if (
             getDistance(item.x, item.y, survivorItem.x, survivorItem.y) < 50
           ) {
-            shelterStateBoolArray[index] = true;
+            waterStateBoolArray[item.index] = true;
+            survivorCountArray[survivorItem.index].waterCount += 1;
+            setSurvivorState((prev) => {
+              prev[survivorItem.index].waterCount += 1;
+              return [...prev];
+            });
+            return false;
+          }
+          return true;
+        });
+
+        shelterStateArray = shelterStateArray.filter((item, index) => {
+          if (shelterStateBoolArray[item.index]) {
+            return false;
+          } else if (
+            getDistance(item.x, item.y, survivorItem.x, survivorItem.y) < 50
+          ) {
+            shelterStateBoolArray[item.index] = true;
             survivorCountArray[survivorItem.index].shelterCount += 1;
             setSurvivorState((prev) => {
               prev[survivorItem.index].shelterCount += 1;
@@ -193,14 +216,13 @@ export const SurvivorWindow = (props) => {
         });
 
         survivorItem.update();
-
-        //end of main forEach Loop
       });
 
       if (firstCheck || secondCheck) {
         survivorStateArray = survivorStateArray.filter((item) => {
           if (
             survivorCountArray[item.index].foodCount < 1 ||
+            survivorCountArray[item.index].waterCount < 1 ||
             survivorCountArray[item.index].shelterCount < 1
           ) {
             setSurvivorState((prev) => {
@@ -209,6 +231,22 @@ export const SurvivorWindow = (props) => {
             });
             return false;
           } else {
+            let count =
+              survivorCountArray[item.index].foodCount +
+              survivorCountArray[item.index].waterCount +
+              survivorCountArray[item.index].shelterCount;
+            if (firstCheck && count >= 3) {
+              setSurvivorState((prev) => {
+                prev[item.index].adaptation = 1;
+                return [...prev];
+              });
+            } else if (secondCheck && count >= 6) {
+              setSurvivorState((prev) => {
+                prev[item.index].adaptation = 2;
+                return [...prev];
+              });
+            }
+
             return true;
           }
         });
@@ -219,16 +257,21 @@ export const SurvivorWindow = (props) => {
           secondCheck = false;
         }
       }
-
       //shorter array indicates value was intercepted, update arrays after main loop complete
-      if (
-        foodStateLength > updatedFoodState.length ||
-        shelterStateLength > updatedShelterState.length
-      ) {
-        foodStateLength = updatedFoodState.length;
-        shelterStateLength = updatedShelterState.length;
+      foodStateLength > foodStateArray.length &&
         setFoodStateArray([...foodStateBoolArray]);
+      waterStateLength > waterStateArray.length &&
+        setWaterStateArray([...waterStateBoolArray]);
+      shelterStateLength > shelterStateArray.length &&
         setShelterStateArray([...shelterStateBoolArray]);
+      if (foodStateLength > foodStateArray.length) {
+        foodStateLength = foodStateArray.length;
+      }
+      if (waterStateLength > waterStateArray.length) {
+        waterStateLength = waterStateArray.length;
+      }
+      if (shelterStateLength > shelterStateArray.length) {
+        shelterStateLength = shelterStateArray.length;
       }
     };
     window.requestAnimationFrame(animateNodes);
@@ -238,7 +281,9 @@ export const SurvivorWindow = (props) => {
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
     foodStateXY,
+    waterStateXY,
     setFoodStateArray,
+    setWaterStateArray,
     setShelterStateArray,
     setSurvivorState,
     shelterStateXY,

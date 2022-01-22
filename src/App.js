@@ -4,12 +4,7 @@ import { Grid } from "@mui/material";
 import "./App.css";
 import { HomePage } from "./components/homePageComponents/HomePage";
 import { AppPage } from "./components/homePageComponents/AppPage";
-
-const environmentPathObject = {
-  desert: "desert",
-  mountain: "mountain",
-  water: "water",
-};
+import { environmentPathObject } from "./helperFunctions";
 
 function App() {
   const [environmentsPath, setEnvironmentsPath] = useState(
@@ -31,7 +26,12 @@ function App() {
         />
         <Route
           path="environments"
-          element={<AppPage environmentsPath={environmentsPath} />}
+          element={
+            <AppPage
+              environmentsPath={environmentsPath}
+              setEnvironmentsPath={setEnvironmentsPath}
+            />
+          }
         />
       </Routes>
     </Grid>

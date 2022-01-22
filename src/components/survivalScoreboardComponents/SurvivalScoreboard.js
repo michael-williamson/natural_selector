@@ -5,6 +5,8 @@ import { Survivors } from "./Survivors";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import { HelpDialogComponent } from "../reusableComponents/HelpDialogComponent";
 import { SliderSelectorComponent } from "../reusableComponents/SliderSelectorComponent";
+import { MenuComponent } from "../homePageComponents/MenuComponent";
+import { environmentPathObject } from "../../helperFunctions";
 
 export const SurvivalScoreboard = (props) => {
   const { handleSimulation } = props;
@@ -16,6 +18,7 @@ export const SurvivalScoreboard = (props) => {
   const { timer, setTimer } = props;
   const [countDown, setCountDown] = useState(30);
   const [countDownFinished, setCountDownFinished] = useState(false);
+  const { environmentsPath, setEnvironmentsPath } = props;
 
   useEffect(() => {
     if (!beginSimulation.start) return;
@@ -60,7 +63,7 @@ export const SurvivalScoreboard = (props) => {
           <Box fontWeight="bold">Begin Simulation</Box>
         </Button>
       </Box>
-      <Box>
+      <Box pb={4}>
         <Button
           variant="contained"
           onClick={handleSimulation(false, false)}
@@ -68,6 +71,14 @@ export const SurvivalScoreboard = (props) => {
         >
           <Box fontWeight="bold">Reset</Box>
         </Button>
+      </Box>
+      <Box>
+        <MenuComponent
+          environmentsPath={environmentsPath}
+          setEnvironmentsPath={setEnvironmentsPath}
+          environmentPathObject={environmentPathObject}
+          dimensions={50}
+        />
       </Box>
       <Box py={4}>
         <Box display="flex" alignItems="center" justifyContent="center">
@@ -118,7 +129,10 @@ export const SurvivalScoreboard = (props) => {
         <SliderSelectorComponent setState={setTimer} state={timer} />
       </Box>
       <Box maxHeight={500} overflow="scroll">
-        <Survivors survivorState={survivorState} />
+        <Survivors
+          survivorState={survivorState}
+          environmentsPath={environmentsPath}
+        />
       </Box>
     </Box>
   );

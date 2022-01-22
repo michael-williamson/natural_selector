@@ -4,9 +4,10 @@ import { InfoBanner } from "../infoBannerComponents/InfoBanner";
 import { CanvasContainer } from "../nodeComponents/CanvasContainer";
 import { SurvivalScoreboard } from "../survivalScoreboardComponents/SurvivalScoreboard";
 import { survivorStateFN } from "../../helperFunctions";
+import { environmentIconObject } from "../../helperFunctions";
 
 export const AppPage = (props) => {
-  const { environmentsPath } = props;
+  const { environmentsPath, setEnvironmentsPath } = props;
   //default is 30 seconds for timer
   const [timer, setTimer] = useState(30);
   const [beginSimulation, setBeginSimulation] = useState({
@@ -41,10 +42,12 @@ export const AppPage = (props) => {
     input
       ? setSurvivorState((prev) => {
           const update = [...prev];
+          // push survivor object from helperFunctions file
           update.push({
             foodCount: 0,
+            waterCount: 0,
             shelterCount: 0,
-            furCount: 0,
+            adaptation: 0,
             eliminated: false,
           });
           return update;
@@ -80,6 +83,8 @@ export const AppPage = (props) => {
           timer={timer}
           survivorState={survivorState}
           numberSurvivors={numberSurvivors}
+          environmentsPath={environmentsPath}
+          setEnvironmentsPath={setEnvironmentsPath}
         />
       </Grid>
       <Grid item xs={10}>
@@ -95,6 +100,8 @@ export const AppPage = (props) => {
           beginSimulation={beginSimulation}
           survivorState={survivorState}
           infoBannerRef={infoBannerRef}
+          environmentIconObject={environmentIconObject[environmentsPath]}
+          environmentsPath={environmentsPath}
         />
       </Grid>
     </Grid>

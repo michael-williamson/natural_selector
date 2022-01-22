@@ -1,16 +1,15 @@
 import React, { useRef, useEffect } from "react";
-import meatFood from "../../media/icons/meat_feed.png";
-
-const icon = new Image();
-icon.src = meatFood;
 
 export const FoodWindow = (props) => {
   const { foodStateXY } = props;
   const { foodStateArray } = props;
   const { canvasDimensions } = props;
+  const { environmentsPath } = props;
+  const { environmentsIconsObject } = props;
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
+  const icon = environmentsIconsObject[environmentsPath].food;
   useEffect(() => {
     const canvas = canvasRef.current;
     let canvasWidth = canvasDimensions.canvasWidth;
@@ -30,6 +29,7 @@ export const FoodWindow = (props) => {
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
     foodStateXY,
+    icon,
   ]);
 
   useEffect(() => {

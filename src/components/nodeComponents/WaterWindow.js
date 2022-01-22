@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from "react";
 
-export const ShelterWindow = (props) => {
-  const { shelterStateXY } = props;
-  const { shelterStateArray } = props;
+export const WaterWindow = (props) => {
+  const { waterStateXY } = props;
+  const { waterStateArray } = props;
   const { canvasDimensions } = props;
   const { environmentsPath } = props;
   const { environmentsIconsObject } = props;
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
-  const icon = environmentsIconsObject[environmentsPath].shelter;
+  const icon = environmentsIconsObject[environmentsPath].water;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -23,27 +23,28 @@ export const ShelterWindow = (props) => {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    shelterStateXY.forEach((item) => {
+    waterStateXY.forEach((item) => {
       contextRef.current.drawImage(icon, item.x, item.y, 40, 40);
     });
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
-    shelterStateXY,
+    waterStateXY,
     icon,
   ]);
 
   useEffect(() => {
-    shelterStateArray.forEach((item, index) => {
+    waterStateArray.forEach((item, index) => {
       if (item) {
         contextRef.current.clearRect(
-          shelterStateXY[index].x,
-          shelterStateXY[index].y,
+          waterStateXY[index].x,
+          waterStateXY[index].y,
           40,
           40
         );
       }
     });
-  }, [shelterStateArray, shelterStateXY]);
-  return <canvas ref={canvasRef} id="shelterCanvas"></canvas>;
+  }, [waterStateArray, waterStateXY]);
+
+  return <canvas ref={canvasRef} id="foodCanvas"></canvas>;
 };
