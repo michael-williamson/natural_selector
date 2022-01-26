@@ -1,9 +1,7 @@
 .homePageContainer {
   background-image: url("../../media/bg_images/helix_one.jpg");
-  /* background-image: url("../..//media/bg_images/helix_two.jpg"); */
   background-repeat: no-repeat;
   background-size: cover;
-  height: 100vh;
   position: relative;
   isolation: isolate;
 }

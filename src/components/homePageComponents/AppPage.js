@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Grid } from "@mui/material";
+import { Box } from "@mui/system";
 import { InfoBanner } from "../infoBannerComponents/InfoBanner";
 import { CanvasContainer } from "../nodeComponents/CanvasContainer";
 import { SurvivalScoreboard } from "../survivalScoreboardComponents/SurvivalScoreboard";
@@ -72,38 +73,40 @@ export const AppPage = (props) => {
   };
 
   return (
-    <Grid container>
-      <Grid item xs={2}>
-        <SurvivalScoreboard
-          handleSimulation={handleSimulation}
-          beginSimulation={beginSimulation}
-          setBeginSimulation={setBeginSimulation}
-          handleClickNumSurvivors={handleClickNumSurvivors}
-          setTimer={setTimer}
-          timer={timer}
-          survivorState={survivorState}
-          numberSurvivors={numberSurvivors}
-          environmentsPath={environmentsPath}
-          setEnvironmentsPath={setEnvironmentsPath}
-        />
+    <Box sx={{ height: { lg: "100vh" }, width: "100%" }}>
+      <Grid container>
+        <Grid item xs={12} lg={4}>
+          <SurvivalScoreboard
+            handleSimulation={handleSimulation}
+            beginSimulation={beginSimulation}
+            setBeginSimulation={setBeginSimulation}
+            handleClickNumSurvivors={handleClickNumSurvivors}
+            setTimer={setTimer}
+            timer={timer}
+            survivorState={survivorState}
+            numberSurvivors={numberSurvivors}
+            environmentsPath={environmentsPath}
+            setEnvironmentsPath={setEnvironmentsPath}
+          />
+        </Grid>
+        <Grid item xs={12} lg={8}>
+          <CanvasContainer
+            beginSimulation={beginSimulation}
+            numberSurvivors={numberSurvivors}
+            setSurvivorState={setSurvivorState}
+            environmentsPath={environmentsPath}
+            infoBannerRef={infoBannerRef}
+            timer={timer}
+          />
+          <InfoBanner
+            beginSimulation={beginSimulation}
+            survivorState={survivorState}
+            infoBannerRef={infoBannerRef}
+            environmentIconObject={environmentIconObject[environmentsPath]}
+            environmentsPath={environmentsPath}
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={10}>
-        <CanvasContainer
-          beginSimulation={beginSimulation}
-          numberSurvivors={numberSurvivors}
-          setSurvivorState={setSurvivorState}
-          environmentsPath={environmentsPath}
-          infoBannerRef={infoBannerRef}
-          timer={timer}
-        />
-        <InfoBanner
-          beginSimulation={beginSimulation}
-          survivorState={survivorState}
-          infoBannerRef={infoBannerRef}
-          environmentIconObject={environmentIconObject[environmentsPath]}
-          environmentsPath={environmentsPath}
-        />
-      </Grid>
-    </Grid>
+    </Box>
   );
 };

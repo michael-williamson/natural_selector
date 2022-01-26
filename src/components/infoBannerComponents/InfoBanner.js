@@ -47,14 +47,16 @@ export const InfoBanner = (props) => {
       return (
         <Box
           key={index}
-          color={theme.palette.primary.light}
-          fontSize={40}
-          fontWeight="bold"
-          p={2}
-          border={2}
-          borderColor={theme.palette.primary.light}
-          mx={2}
-          borderRadius={2}
+          sx={{
+            color: "primary.light",
+            fontSize: 40,
+            fontWeight: "bold",
+            p: 2,
+            border: 2,
+            borderColor: "primary.light",
+            mx: 2,
+            borderRadius: 2,
+          }}
         >
           <Box
             bgcolor="primary.main"
@@ -135,6 +137,7 @@ export const InfoBanner = (props) => {
           fontWeight="bold"
           py={4}
           display="flex"
+          overflow="scroll"
         >
           {beginSimulation.finished ? printResults() : <PlaceHolderTemplate />}
         </Box>

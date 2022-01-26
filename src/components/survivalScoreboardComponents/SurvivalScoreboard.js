@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Box } from "@mui/system";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { Button } from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Survivors } from "./Survivors";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import { HelpDialogComponent } from "../reusableComponents/HelpDialogComponent";
@@ -18,6 +24,8 @@ export const SurvivalScoreboard = (props) => {
   const { timer, setTimer } = props;
   const [countDown, setCountDown] = useState(30);
   const [countDownFinished, setCountDownFinished] = useState(false);
+  const theme = useTheme();
+  const expanded = useMediaQuery(theme.breakpoints.up("lg"));
   const { environmentsPath, setEnvironmentsPath } = props;
 
   useEffect(() => {
@@ -78,6 +86,7 @@ export const SurvivalScoreboard = (props) => {
           setEnvironmentsPath={setEnvironmentsPath}
           environmentPathObject={environmentPathObject}
           dimensions={50}
+          disabled={beginSimulation.start || beginSimulation.finished}
         />
       </Box>
       <Box py={4}>
@@ -126,13 +135,45 @@ export const SurvivalScoreboard = (props) => {
         </Box>
       </Box>
       <Box>
+        <Box fontSize={20} fontWeight="bold" color="primary.light">
+          First Elimination: {Math.floor(timer / 2)} seconds
+        </Box>
+      </Box>
+      <Box>
+        <Box fontSize={20} fontWeight="bold" color="primary.light">
+          Second Elimination: {Math.floor(timer / 4)} seconds
+        </Box>
+      </Box>
+      <Box>
         <SliderSelectorComponent setState={setTimer} state={timer} />
       </Box>
       <Box maxHeight={500} overflow="scroll">
-        <Survivors
-          survivorState={survivorState}
-          environmentsPath={environmentsPath}
-        />
+        <Accordion expanded={expanded}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Box
+              sx={{
+                fontWeight: "bold",
+                fontSize: 20,
+                borderRadius: 1,
+                p: 2,
+                color: "primary.light",
+                bgcolor: "primary.main",
+              }}
+            >
+              Survivors
+            </Box>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Survivors
+              survivorState={survivorState}
+              environmentsPath={environmentsPath}
+            />
+          </AccordionDetails>
+        </Accordion>
       </Box>
     </Box>
   );

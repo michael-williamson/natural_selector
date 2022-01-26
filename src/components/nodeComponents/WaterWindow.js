@@ -15,6 +15,7 @@ export const WaterWindow = (props) => {
     const canvas = canvasRef.current;
     let canvasWidth = canvasDimensions.canvasWidth;
     let canvasHeight = canvasDimensions.canvasHeight;
+    let iconDimensions = canvasDimensions.iconDimensions;
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvas.style.overflow = "hidden";
@@ -24,13 +25,20 @@ export const WaterWindow = (props) => {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     waterStateXY.forEach((item) => {
-      contextRef.current.drawImage(icon, item.x, item.y, 40, 40);
+      contextRef.current.drawImage(
+        icon,
+        item.x,
+        item.y,
+        iconDimensions,
+        iconDimensions
+      );
     });
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
     waterStateXY,
     icon,
+    canvasDimensions.iconDimensions,
   ]);
 
   useEffect(() => {
@@ -39,12 +47,12 @@ export const WaterWindow = (props) => {
         contextRef.current.clearRect(
           waterStateXY[index].x,
           waterStateXY[index].y,
-          40,
-          40
+          canvasDimensions.iconDimensions,
+          canvasDimensions.iconDimensions
         );
       }
     });
-  }, [waterStateArray, waterStateXY]);
+  }, [canvasDimensions.iconDimensions, waterStateArray, waterStateXY]);
 
   return <canvas ref={canvasRef} id="foodCanvas"></canvas>;
 };

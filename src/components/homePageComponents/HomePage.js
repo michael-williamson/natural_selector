@@ -1,6 +1,8 @@
 import React from "react";
 import { Grid, Button } from "@mui/material";
 import { Box } from "@mui/system";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { dnaIcon, grassIcon, waterIcon } from "../../media";
 import { MenuComponent } from "./MenuComponent";
 import "./HomePage.css";
@@ -10,9 +12,29 @@ export const HomePage = (props) => {
   const { environmentsPath, setEnvironmentsPath, environmentPathObject } =
     props;
 
+  const theme = useTheme();
+  const smallImage = useMediaQuery(theme.breakpoints.down("sm"));
+  const mdImage = useMediaQuery(theme.breakpoints.down("md"));
+
+  const imageSize = () => {
+    if (smallImage) {
+      return 50;
+    } else if (mdImage) {
+      return 100;
+    }
+    return 200;
+  };
+
   return (
-    <Grid item xs={8} className="homePageContainer">
-      <Box borderRight={4} borderLeft={4} borderColor="primary.main">
+    <Grid item xs={10} className="homePageContainer">
+      <Box
+        sx={{
+          borderRight: 4,
+          borderLeft: 4,
+          borderColor: "primary.main",
+          height: { lg: "100%" },
+        }}
+      >
         <Grid
           container
           item
@@ -23,13 +45,15 @@ export const HomePage = (props) => {
           wrap="nowrap"
         >
           <Grid container item xs={12} justifyContent="center" spacing={2}>
-            <Grid item xs={4}>
+            <Grid item xs={10} md={4}>
               <Box
-                color="secondary.main"
-                p={4}
-                bgcolor="primary.main"
-                borderRadius={5}
-                my={4}
+                sx={{
+                  color: "secondary.main",
+                  p: 4,
+                  bgcolor: "primary.main",
+                  borderRadius: 5,
+                  my: { xs: 2, md: 4 },
+                }}
               >
                 <Box fontWeight="bold" fontSize={40}>
                   Natural Selector
@@ -45,16 +69,19 @@ export const HomePage = (props) => {
                 </Box>
               </Box>
             </Grid>
-            <Grid container item xs={4}>
+            <Grid container item xs={10} md={4}>
               <Grid item>
                 <Box
-                  fontWeight="bold"
-                  fontSize={20}
-                  color="secondary.main"
-                  p={4}
-                  mt={4}
-                  bgcolor="primary.main"
-                  borderRadius={5}
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    color: "secondary.main",
+                    p: 4,
+                    mt: { xs: 2 },
+                    mb: { xs: 2 },
+                    bgcolor: "primary.main",
+                    borderRadius: 5,
+                  }}
                 >
                   Simulations performed in a variety of environments to
                   determine what genetics get to live and continue a species
@@ -62,12 +89,16 @@ export const HomePage = (props) => {
               </Grid>
               <Grid item>
                 <Box
-                  fontWeight="bold"
-                  fontSize={20}
-                  color="secondary.main"
-                  p={4}
-                  bgcolor="primary.main"
-                  borderRadius={5}
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    color: "secondary.main",
+                    p: 4,
+                    mt: { xs: 2 },
+                    mb: { xs: 2 },
+                    bgcolor: "primary.main",
+                    borderRadius: 5,
+                  }}
                 >
                   Each Survivor has to have acquired certain resources at
                   certain time intervals to be able to continue, once completed
@@ -95,17 +126,22 @@ export const HomePage = (props) => {
             environmentsPath={environmentsPath}
             setEnvironmentsPath={setEnvironmentsPath}
             environmentPathObject={environmentPathObject}
-            dimensions={200}
+            dimensions={imageSize()}
+            imageTextSize={12}
+            imageTextPadding={1}
           />
+
           <Grid item xs={10}>
             <Button>
               <Link to="environments">
                 <Box
-                  px={4}
-                  my={2}
-                  bgcolor="primary.main"
-                  borderRadius={5}
-                  fontWeight="bold"
+                  sx={{
+                    px: 4,
+                    bgcolor: "primary.main",
+                    borderRadius: 5,
+                    fontWeight: "bold",
+                    my: { xs: 4 },
+                  }}
                 >
                   <Box>{environmentsPath} Canvas</Box>
                   <Box fontWeight="bold" fontSize={20} color="secondary.main">

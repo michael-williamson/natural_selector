@@ -15,6 +15,7 @@ export const ShelterWindow = (props) => {
     const canvas = canvasRef.current;
     let canvasWidth = canvasDimensions.canvasWidth;
     let canvasHeight = canvasDimensions.canvasHeight;
+    let iconDimensions = canvasDimensions.iconDimensions;
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvas.style.overflow = "hidden";
@@ -24,13 +25,20 @@ export const ShelterWindow = (props) => {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     shelterStateXY.forEach((item) => {
-      contextRef.current.drawImage(icon, item.x, item.y, 40, 40);
+      contextRef.current.drawImage(
+        icon,
+        item.x,
+        item.y,
+        iconDimensions,
+        iconDimensions
+      );
     });
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
     shelterStateXY,
     icon,
+    canvasDimensions.iconDimensions,
   ]);
 
   useEffect(() => {
@@ -39,11 +47,11 @@ export const ShelterWindow = (props) => {
         contextRef.current.clearRect(
           shelterStateXY[index].x,
           shelterStateXY[index].y,
-          40,
-          40
+          canvasDimensions.iconDimensions,
+          canvasDimensions.iconDimensions
         );
       }
     });
-  }, [shelterStateArray, shelterStateXY]);
+  }, [canvasDimensions.iconDimensions, shelterStateArray, shelterStateXY]);
   return <canvas ref={canvasRef} id="shelterCanvas"></canvas>;
 };

@@ -33,17 +33,17 @@ export const xyCoordinateGenerator = (
   const nodeArray = [];
   const bufferedWidth = canvasWidth - buffer;
   const bufferedHeight = canvasHeight - buffer;
-  const bufferSquared = buffer * 2;
+
   for (let i = 0; i < num; i++) {
     let x = Math.random() * canvasWidth;
     let y = Math.random() * canvasHeight;
     x = Math.floor(x);
     y = Math.floor(y);
     if (x >= bufferedWidth || x <= buffer) {
-      x = x >= bufferedWidth ? x - bufferSquared : x + bufferSquared;
+      x = x >= bufferedWidth ? bufferedWidth : buffer;
     }
     if (y >= bufferedHeight || y <= buffer) {
-      y = y >= bufferedHeight ? y - bufferSquared : y + bufferSquared;
+      y = y >= bufferedHeight ? bufferedHeight : buffer;
     }
     nodeArray.push(new XYObject(x, y, i));
   }
@@ -63,12 +63,12 @@ export const xyCoordinateObject = (canvasWidth, canvasHeight, buffer) => {
 
   const bufferedWidth = canvasWidth - buffer;
   const bufferedHeight = canvasHeight - buffer;
-  const bufferSquared = buffer * 2;
+
   if (x >= bufferedWidth || x <= buffer) {
-    x = x >= bufferedWidth ? x - bufferSquared : x + bufferSquared;
+    x = x >= bufferedWidth ? bufferedWidth : buffer;
   }
   if (y >= bufferedHeight || y <= buffer) {
-    y = y >= bufferedHeight ? y - bufferSquared : y + bufferSquared;
+    y = y >= bufferedHeight ? bufferedHeight : buffer;
   }
   return new XYObject(x, y);
 };

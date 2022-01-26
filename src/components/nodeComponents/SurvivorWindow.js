@@ -24,6 +24,7 @@ export const SurvivorWindow = (props) => {
     const canvas = canvasRef.current;
     let canvasWidth = canvasDimensions.canvasWidth;
     let canvasHeight = canvasDimensions.canvasHeight;
+    let iconDimensions = canvasDimensions.iconDimensions;
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvas.style.overflow = "hidden";
@@ -37,7 +38,7 @@ export const SurvivorWindow = (props) => {
       this.removed = false;
 
       this.draw = function () {
-        context.drawImage(icon, this.x, this.y, 60, 60);
+        context.drawImage(icon, this.x, this.y, iconDimensions, iconDimensions);
       };
     }
 
@@ -58,6 +59,7 @@ export const SurvivorWindow = (props) => {
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
+    canvasDimensions.iconDimensions,
     survivorStateXY,
     survivorStateXY.length,
   ]);
@@ -69,6 +71,7 @@ export const SurvivorWindow = (props) => {
     const context = contextRef.current;
     //for now padding to keep icons on page
     const buffer = canvasDimensions.buffer;
+    let iconDimensions = canvasDimensions.iconDimensions;
     const bufferedWidth = canvasDimensions.canvasWidth - buffer;
     const bufferedHeight = canvasDimensions.canvasHeight - buffer;
     const canvas = canvasRef.current;
@@ -108,7 +111,7 @@ export const SurvivorWindow = (props) => {
       this.index = index;
 
       this.draw = function () {
-        context.drawImage(icon, this.x, this.y, 60, 60);
+        context.drawImage(icon, this.x, this.y, iconDimensions, iconDimensions);
       };
       this.update = function () {
         if (this.x >= bufferedWidth || this.x <= buffer) {
@@ -122,7 +125,7 @@ export const SurvivorWindow = (props) => {
         this.draw();
       };
       this.remove = function () {
-        context.clearRect(this.x, this.y, 60, 60);
+        context.clearRect(this.x, this.y, iconDimensions, iconDimensions);
       };
     }
 
@@ -289,6 +292,7 @@ export const SurvivorWindow = (props) => {
     shelterStateXY,
     survivorStateXY,
     timer,
+    canvasDimensions.iconDimensions,
   ]);
 
   return <canvas ref={canvasRef} id="dnaCanvas" />;

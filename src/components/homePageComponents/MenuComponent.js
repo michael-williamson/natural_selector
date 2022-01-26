@@ -18,9 +18,6 @@ const Image = styled("img")(
       borderColor: theme.palette.primary.light,
       cursor: "pointer",
     },
-    "&:active": {
-      borderColor: theme.palette.primary.light,
-    },
   })
 );
 
@@ -30,14 +27,22 @@ export const MenuComponent = (props) => {
     setEnvironmentsPath,
     environmentPathObject,
     dimensions,
+    imageTextSize,
+    imageTextPadding,
+    disabled,
   } = props;
   const handlePathClick = (prop) => () => {
-    setEnvironmentsPath(prop);
+    !disabled && setEnvironmentsPath(prop);
   };
   return (
     <Grid container item justifyContent="space-around">
       <Grid item xs={3}>
-        <Box fontWeight="bold" color="secondary.main">
+        <Box
+          fontWeight="bold"
+          color="secondary.main"
+          fontSize={imageTextSize}
+          pb={imageTextPadding}
+        >
           Hot Desert
         </Box>
         <Box onClick={handlePathClick(environmentPathObject.desert)}>
@@ -51,8 +56,13 @@ export const MenuComponent = (props) => {
         </Box>
       </Grid>
       <Grid item xs={3}>
-        <Box fontWeight="bold" color="secondary.main">
-          Cold Mountainous
+        <Box
+          fontWeight="bold"
+          color="secondary.main"
+          fontSize={imageTextSize}
+          pb={imageTextPadding}
+        >
+          Mountains
         </Box>
         <Box onClick={handlePathClick(environmentPathObject.mountain)}>
           <Image
@@ -65,7 +75,12 @@ export const MenuComponent = (props) => {
         </Box>
       </Grid>
       <Grid item xs={3}>
-        <Box fontWeight="bold" color="secondary.main">
+        <Box
+          fontWeight="bold"
+          color="secondary.main"
+          fontSize={imageTextSize}
+          pb={imageTextPadding}
+        >
           Rain Forest
         </Box>
         <Box onClick={handlePathClick(environmentPathObject.rainForest)}>

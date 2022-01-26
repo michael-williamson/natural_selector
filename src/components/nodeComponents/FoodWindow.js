@@ -14,6 +14,7 @@ export const FoodWindow = (props) => {
     const canvas = canvasRef.current;
     let canvasWidth = canvasDimensions.canvasWidth;
     let canvasHeight = canvasDimensions.canvasHeight;
+    let iconDimensions = canvasDimensions.iconDimensions;
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvas.style.overflow = "hidden";
@@ -23,11 +24,18 @@ export const FoodWindow = (props) => {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     foodStateXY.forEach((item) => {
-      contextRef.current.drawImage(icon, item.x, item.y, 40, 40);
+      contextRef.current.drawImage(
+        icon,
+        item.x,
+        item.y,
+        iconDimensions,
+        iconDimensions
+      );
     });
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
+    canvasDimensions.iconDimensions,
     foodStateXY,
     icon,
   ]);
@@ -38,12 +46,12 @@ export const FoodWindow = (props) => {
         contextRef.current.clearRect(
           foodStateXY[index].x,
           foodStateXY[index].y,
-          40,
-          40
+          canvasDimensions.iconDimensions,
+          canvasDimensions.iconDimensions
         );
       }
     });
-  }, [foodStateArray, foodStateXY]);
+  }, [canvasDimensions.iconDimensions, foodStateArray, foodStateXY]);
 
   return <canvas ref={canvasRef} id="foodCanvas"></canvas>;
 };

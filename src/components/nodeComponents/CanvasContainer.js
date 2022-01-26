@@ -9,12 +9,21 @@ import { WaterWindow } from "./WaterWindow";
 import { environmentIconsObjectFN } from "../../helperFunctions";
 
 //create component before render
-const CanvasWrapper = styled("div")(() => {
+const CanvasWrapper = styled("div")(({ theme, fixedHeight }) => {
   return {
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     position: "relative",
     width: "100%",
+    [theme.breakpoints.down("sm")]: {
+      height: 500,
+    },
+    [theme.breakpoints.down("md")]: {
+      height: 500,
+    },
+    [theme.breakpoints.up("lg")]: {
+      height: fixedHeight,
+    },
     "&::after": {
       position: "absolute",
       inset: 0,
@@ -50,6 +59,29 @@ export const CanvasContainer = (props) => {
     const currentDiv = canvasContainer.current;
     let cHeight = currentDiv.clientHeight;
     let cWidth = currentDiv.clientWidth;
+    //central location to set buffer of canvas and image size so that images don't disappear off page
+    const bufferFN = (cWidth) => {
+      const bufferArray = [
+        { cWidth: 500, iconDimensions: 20, buffer: 10 },
+        { cWidth: 800, iconDimensions: 20, buffer: 10 },
+        { cWidth: 1200, iconDimensions: 20, buffer: 10 },
+      ];
+
+      let resultArr = bufferArray.filter((item) => {
+        if (cWidth < item.cWidth) {
+          return item;
+        }
+        return item;
+      });
+
+      return resultArr[0];
+    };
+
+    const bufferObject = bufferFN(cWidth);
+
+    let buffer = bufferObject.buffer;
+
+    console.log(cWidth, cHeight, "useEffect inside xyobject");
 
     setAllCanvasDetails((prev) => {
       if (prev === null) return prev;
@@ -59,7 +91,7 @@ export const CanvasContainer = (props) => {
         prev.survivorStateXY.pop();
         return { ...prev };
       } else if (count > length) {
-        prev.survivorStateXY.push(xyCoordinateObject(cWidth, cHeight, 60));
+        prev.survivorStateXY.push(xyCoordinateObject(cWidth, cHeight, buffer));
         return { ...prev };
       }
       return { ...prev };
@@ -75,7 +107,29 @@ export const CanvasContainer = (props) => {
     const currentInfoBanner = infoBannerRef.current;
     const offsetHeight = window.innerHeight - currentInfoBanner.clientHeight;
     let offsetWidth = window.innerWidth - cWidth;
-    offsetWidth = offsetWidth - 20;
+
+    //central location to set buffer of canvas and image size so that images don't disappear off page
+    const bufferFN = (cWidth) => {
+      const bufferArray = [
+        { cWidth: 500, iconDimensions: 40, buffer: 40 },
+        { cWidth: 800, iconDimensions: 40, buffer: 40 },
+        { cWidth: 1200, iconDimensions: 40, buffer: 40 },
+      ];
+
+      let resultArr = bufferArray.filter((item) => {
+        if (cWidth < item.cWidth) {
+          return item;
+        }
+        return item;
+      });
+
+      return resultArr[0];
+    };
+
+    const bufferObject = bufferFN(cWidth);
+
+    let iconDimensions = bufferObject.iconDimensions;
+    let buffer = bufferObject.buffer;
 
     setFoodStateArray(Array(7).fill(false));
     setWaterStateArray(Array(7).fill(false));
@@ -86,12 +140,13 @@ export const CanvasContainer = (props) => {
         canvasX: offsetWidth,
         canvasHeight: offsetHeight,
         canvasWidth: cWidth,
-        buffer: 60,
+        buffer: buffer,
+        iconDimensions: iconDimensions,
       },
-      shelterStateXY: xyCoordinateGenerator(7, cWidth - 50, cHeight - 50),
-      foodStateXY: xyCoordinateGenerator(7, cWidth - 50, cHeight - 50),
-      waterStateXY: xyCoordinateGenerator(7, cWidth - 50, cHeight - 50),
-      survivorStateXY: xyCoordinateGenerator(10, cWidth, cHeight, 60),
+      shelterStateXY: xyCoordinateGenerator(7, cWidth, cHeight, buffer),
+      foodStateXY: xyCoordinateGenerator(7, cWidth, cHeight, buffer),
+      waterStateXY: xyCoordinateGenerator(7, cWidth, cHeight, buffer),
+      survivorStateXY: xyCoordinateGenerator(10, cWidth, cHeight, buffer),
     });
   }, [infoBannerRef, beginSimulation.start, beginSimulation.finished]);
 
@@ -100,13 +155,13 @@ export const CanvasContainer = (props) => {
       className="canvasContainer"
       id="canvasContainer"
       ref={canvasContainer}
+      fixedHeight={`${
+        infoBannerRef.current
+          ? window.innerHeight - infoBannerRef?.current.clientHeight
+          : "500"
+      }px`}
       style={{
         backgroundImage: `url(${bgImageObject[environmentsPath]})`,
-        height: `${
-          infoBannerRef.current
-            ? window.innerHeight - infoBannerRef?.current.clientHeight
-            : "500"
-        }px`,
       }}
     >
       {allCanvasDetails && (
