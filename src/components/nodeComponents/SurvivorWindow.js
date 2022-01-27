@@ -293,7 +293,6 @@ export const SurvivorWindow = (props) => {
     window.requestAnimationFrame(animateNodes);
 
     return () => {
-      console.log("timerId cleared");
       clearTimer = true;
       clearInterval(timerID);
     };

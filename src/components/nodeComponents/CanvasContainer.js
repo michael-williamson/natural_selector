@@ -97,8 +97,7 @@ export const CanvasContainer = (props) => {
 
   useEffect(() => {
     if (!infoBannerRef) return;
-    // if (beginSimulation.start || beginSimulation.finished) return;
-    console.log("use effect canvas container firing");
+    if (!numberSurvivors.reset) return;
     const currentDiv = canvasContainer.current;
     let cHeight = currentDiv.clientHeight;
     let cWidth = currentDiv.clientWidth;
@@ -128,44 +127,43 @@ export const CanvasContainer = (props) => {
 
     let iconDimensions = bufferObject.iconDimensions;
     let buffer = bufferObject.buffer;
-    if (numberSurvivors.reset) {
-      setFoodStateArray(Array(resourceQuantity).fill(false));
-      setWaterStateArray(Array(resourceQuantity).fill(false));
-      setShelterStateArray(Array(resourceQuantity).fill(false));
 
-      setAllCanvasDetails({
-        canvasDimensions: {
-          canvasX: offsetWidth,
-          canvasHeight: offsetHeight,
-          canvasWidth: cWidth,
-          buffer: buffer,
-          iconDimensions: iconDimensions,
-        },
-        shelterStateXY: xyCoordinateGenerator(
-          resourceQuantity,
-          cWidth,
-          cHeight,
-          buffer
-        ),
-        foodStateXY: xyCoordinateGenerator(
-          resourceQuantity,
-          cWidth,
-          cHeight,
-          buffer
-        ),
-        waterStateXY: xyCoordinateGenerator(
-          resourceQuantity,
-          cWidth,
-          cHeight,
-          buffer
-        ),
-        survivorStateXY: xyCoordinateGenerator(10, cWidth, cHeight, buffer),
-      });
-      setNumberSurvivors((prev) => {
-        prev.reset = false;
-        return { ...prev };
-      });
-    }
+    setFoodStateArray(Array(resourceQuantity).fill(false));
+    setWaterStateArray(Array(resourceQuantity).fill(false));
+    setShelterStateArray(Array(resourceQuantity).fill(false));
+
+    setAllCanvasDetails({
+      canvasDimensions: {
+        canvasX: offsetWidth,
+        canvasHeight: offsetHeight,
+        canvasWidth: cWidth,
+        buffer: buffer,
+        iconDimensions: iconDimensions,
+      },
+      shelterStateXY: xyCoordinateGenerator(
+        resourceQuantity,
+        cWidth,
+        cHeight,
+        buffer
+      ),
+      foodStateXY: xyCoordinateGenerator(
+        resourceQuantity,
+        cWidth,
+        cHeight,
+        buffer
+      ),
+      waterStateXY: xyCoordinateGenerator(
+        resourceQuantity,
+        cWidth,
+        cHeight,
+        buffer
+      ),
+      survivorStateXY: xyCoordinateGenerator(10, cWidth, cHeight, buffer),
+    });
+    setNumberSurvivors((prev) => {
+      prev.reset = false;
+      return { ...prev };
+    });
   }, [
     infoBannerRef,
     beginSimulation.start,

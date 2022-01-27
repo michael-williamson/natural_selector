@@ -44,7 +44,6 @@ export const SurvivalScoreboard = (props) => {
     }
 
     return () => {
-      console.log("countdown cleared");
       clearInterval(clearCountDown);
     };
   }, [setCountDown, timer, beginSimulation]);
@@ -177,7 +176,7 @@ export const SurvivalScoreboard = (props) => {
         />
       </Box>
       <Box maxHeight={500} overflow="scroll">
-        <Accordion expanded={expanded}>
+        <Accordion expanded={expanded} sx={{ pb: 16 }}>
           <AccordionSummary
             expandIcon={expanded ? "" : <ExpandMoreIcon />}
             aria-controls="panel1a-content"
