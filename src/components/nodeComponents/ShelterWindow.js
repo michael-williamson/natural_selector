@@ -1,17 +1,16 @@
 import React, { useRef, useEffect } from "react";
+import { environmentIconObject } from "../../helperFunctions";
 
 export const ShelterWindow = (props) => {
   const { shelterStateXY } = props;
   const { shelterStateArray } = props;
   const { canvasDimensions } = props;
   const { environmentsPath } = props;
-  const { environmentsIconsObject } = props;
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
-  const icon = environmentsIconsObject[environmentsPath].shelter;
-
   useEffect(() => {
+    if (!canvasRef) return;
     const canvas = canvasRef.current;
     let canvasWidth = canvasDimensions.canvasWidth;
     let canvasHeight = canvasDimensions.canvasHeight;
@@ -24,21 +23,28 @@ export const ShelterWindow = (props) => {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    const image = new Image();
+
     shelterStateXY.forEach((item) => {
-      contextRef.current.drawImage(
-        icon,
-        item.x,
-        item.y,
-        iconDimensions,
-        iconDimensions
-      );
+      image.addEventListener("load", (e) => {
+        contextRef.current.drawImage(
+          image,
+          item.x,
+          item.y,
+          iconDimensions,
+          iconDimensions
+        );
+      });
     });
+
+    image.src = environmentIconObject[environmentsPath].shelter;
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
     shelterStateXY,
-    icon,
     canvasDimensions.iconDimensions,
+    canvasRef,
+    environmentsPath,
   ]);
 
   useEffect(() => {

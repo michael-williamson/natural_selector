@@ -41,7 +41,7 @@ export const InfoBanner = (props) => {
   };
 
   const printResults = () => {
-    return survivorState.map((item, index) => {
+    const results = survivorState.map((item, index) => {
       if (item.eliminated) return null;
 
       return (
@@ -60,7 +60,7 @@ export const InfoBanner = (props) => {
         >
           <Box
             bgcolor="primary.main"
-            fontSize={40}
+            fontSize={20}
             p={2}
             borderRadius={2}
           >{`Survivor #${index + 1}`}</Box>
@@ -89,7 +89,7 @@ export const InfoBanner = (props) => {
             />
           </Box>
           <Box fontSize={20} display="flex">
-            <Box>Adaptation:</Box>
+            <Box>Adaptations:</Box>
             <ImageComponent
               iterations={item.adaptation}
               image={environmentIconObject.adaptation}
@@ -99,6 +99,8 @@ export const InfoBanner = (props) => {
         </Box>
       );
     });
+
+    return results.length > 0 ? results : <Box fontSize={20}>No Survivors</Box>;
   };
 
   return (
@@ -114,7 +116,7 @@ export const InfoBanner = (props) => {
         borderRadius={2}
       >
         <Box display="flex" alignItems="center" justifyContent="center">
-          <Box py={2} fontSize={40} fontWeight="bold" color="primary.light">
+          <Box py={2} fontSize={30} fontWeight="bold" color="primary.light">
             List of Survivors
           </Box>
           <Box pl={2}>

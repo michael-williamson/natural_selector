@@ -1,15 +1,14 @@
 import React, { useRef, useEffect } from "react";
+import { environmentIconObject } from "../../helperFunctions";
 
 export const FoodWindow = (props) => {
   const { foodStateXY } = props;
   const { foodStateArray } = props;
   const { canvasDimensions } = props;
   const { environmentsPath } = props;
-  const { environmentsIconsObject } = props;
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
-  const icon = environmentsIconsObject[environmentsPath].food;
   useEffect(() => {
     const canvas = canvasRef.current;
     let canvasWidth = canvasDimensions.canvasWidth;
@@ -23,21 +22,28 @@ export const FoodWindow = (props) => {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    const image = new Image();
+
     foodStateXY.forEach((item) => {
-      contextRef.current.drawImage(
-        icon,
-        item.x,
-        item.y,
-        iconDimensions,
-        iconDimensions
-      );
+      image.addEventListener("load", (e) => {
+        contextRef.current.drawImage(
+          image,
+          item.x,
+          item.y,
+          iconDimensions,
+          iconDimensions
+        );
+      });
     });
+
+    image.src = environmentIconObject[environmentsPath].food;
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
     canvasDimensions.iconDimensions,
+
+    environmentsPath,
     foodStateXY,
-    icon,
   ]);
 
   useEffect(() => {

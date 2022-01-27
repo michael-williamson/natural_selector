@@ -16,6 +16,7 @@ import { environmentPathObject } from "../../helperFunctions";
 
 export const SurvivalScoreboard = (props) => {
   const { handleSimulation } = props;
+  const { handleResetSimulation } = props;
   const { beginSimulation } = props;
   const { setBeginSimulation } = props;
   const { handleClickNumSurvivors } = props;
@@ -41,7 +42,17 @@ export const SurvivalScoreboard = (props) => {
         return (prev -= 1);
       });
     }
+
+    return () => {
+      console.log("countdown cleared");
+      clearInterval(clearCountDown);
+    };
   }, [setCountDown, timer, beginSimulation]);
+
+  useEffect(() => {
+    if (beginSimulation.start) return;
+    setCountDown(timer);
+  }, [beginSimulation.start, timer]);
 
   useEffect(() => {
     countDownFinished &&
@@ -74,7 +85,7 @@ export const SurvivalScoreboard = (props) => {
       <Box pb={4}>
         <Button
           variant="contained"
-          onClick={handleSimulation(false, false)}
+          onClick={handleResetSimulation}
           color="error"
         >
           <Box fontWeight="bold">Reset</Box>
@@ -135,22 +146,40 @@ export const SurvivalScoreboard = (props) => {
         </Box>
       </Box>
       <Box>
-        <Box fontSize={20} fontWeight="bold" color="primary.light">
-          First Elimination: {Math.floor(timer / 2)} seconds
+        <Box
+          fontSize={20}
+          fontWeight="bold"
+          color={
+            numberSurvivors.firstElimination ? "text.disabled" : "primary.light"
+          }
+        >
+          First Elimination @ {Math.floor(timer / 2)} seconds
         </Box>
       </Box>
       <Box>
-        <Box fontSize={20} fontWeight="bold" color="primary.light">
-          Second Elimination: {Math.floor(timer / 4)} seconds
+        <Box
+          fontSize={20}
+          fontWeight="bold"
+          color={
+            numberSurvivors.secondElimination
+              ? "text.disabled"
+              : "primary.light"
+          }
+        >
+          Second Elimination @ {Math.floor(timer / 4)} seconds
         </Box>
       </Box>
       <Box>
-        <SliderSelectorComponent setState={setTimer} state={timer} />
+        <SliderSelectorComponent
+          setState={setTimer}
+          state={timer}
+          disabled={beginSimulation.start || beginSimulation.finished}
+        />
       </Box>
       <Box maxHeight={500} overflow="scroll">
         <Accordion expanded={expanded}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={expanded ? "" : <ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >

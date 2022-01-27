@@ -6,7 +6,6 @@ import { SurvivorWindow } from "./SurvivorWindow";
 import { ShelterWindow } from "./ShelterWindow";
 import { desertBG, mountainsBG, rainForestBG } from "../../media";
 import { WaterWindow } from "./WaterWindow";
-import { environmentIconsObjectFN } from "../../helperFunctions";
 
 //create component before render
 const CanvasWrapper = styled("div")(({ theme, fixedHeight }) => {
@@ -38,12 +37,12 @@ export const CanvasContainer = (props) => {
   const { environmentsPath } = props;
   const { timer } = props;
   const { infoBannerRef } = props;
-  const { numberSurvivors } = props;
+  const { numberSurvivors, setNumberSurvivors } = props;
   const [allCanvasDetails, setAllCanvasDetails] = useState(null);
   const [foodStateArray, setFoodStateArray] = useState(null);
   const [waterStateArray, setWaterStateArray] = useState(null);
   const [shelterStateArray, setShelterStateArray] = useState(null);
-  const [environmentsIconsObject] = useState(environmentIconsObjectFN());
+  const [resourceQuantity] = useState(14);
   const { beginSimulation } = props;
   const { setSurvivorState } = props;
 
@@ -81,8 +80,6 @@ export const CanvasContainer = (props) => {
 
     let buffer = bufferObject.buffer;
 
-    console.log(cWidth, cHeight, "useEffect inside xyobject");
-
     setAllCanvasDetails((prev) => {
       if (prev === null) return prev;
       const length = prev.survivorStateXY.length;
@@ -100,7 +97,8 @@ export const CanvasContainer = (props) => {
 
   useEffect(() => {
     if (!infoBannerRef) return;
-    if (beginSimulation.start || beginSimulation.finished) return;
+    // if (beginSimulation.start || beginSimulation.finished) return;
+    console.log("use effect canvas container firing");
     const currentDiv = canvasContainer.current;
     let cHeight = currentDiv.clientHeight;
     let cWidth = currentDiv.clientWidth;
@@ -130,25 +128,52 @@ export const CanvasContainer = (props) => {
 
     let iconDimensions = bufferObject.iconDimensions;
     let buffer = bufferObject.buffer;
+    if (numberSurvivors.reset) {
+      setFoodStateArray(Array(resourceQuantity).fill(false));
+      setWaterStateArray(Array(resourceQuantity).fill(false));
+      setShelterStateArray(Array(resourceQuantity).fill(false));
 
-    setFoodStateArray(Array(7).fill(false));
-    setWaterStateArray(Array(7).fill(false));
-    setShelterStateArray(Array(7).fill(false));
-
-    setAllCanvasDetails({
-      canvasDimensions: {
-        canvasX: offsetWidth,
-        canvasHeight: offsetHeight,
-        canvasWidth: cWidth,
-        buffer: buffer,
-        iconDimensions: iconDimensions,
-      },
-      shelterStateXY: xyCoordinateGenerator(7, cWidth, cHeight, buffer),
-      foodStateXY: xyCoordinateGenerator(7, cWidth, cHeight, buffer),
-      waterStateXY: xyCoordinateGenerator(7, cWidth, cHeight, buffer),
-      survivorStateXY: xyCoordinateGenerator(10, cWidth, cHeight, buffer),
-    });
-  }, [infoBannerRef, beginSimulation.start, beginSimulation.finished]);
+      setAllCanvasDetails({
+        canvasDimensions: {
+          canvasX: offsetWidth,
+          canvasHeight: offsetHeight,
+          canvasWidth: cWidth,
+          buffer: buffer,
+          iconDimensions: iconDimensions,
+        },
+        shelterStateXY: xyCoordinateGenerator(
+          resourceQuantity,
+          cWidth,
+          cHeight,
+          buffer
+        ),
+        foodStateXY: xyCoordinateGenerator(
+          resourceQuantity,
+          cWidth,
+          cHeight,
+          buffer
+        ),
+        waterStateXY: xyCoordinateGenerator(
+          resourceQuantity,
+          cWidth,
+          cHeight,
+          buffer
+        ),
+        survivorStateXY: xyCoordinateGenerator(10, cWidth, cHeight, buffer),
+      });
+      setNumberSurvivors((prev) => {
+        prev.reset = false;
+        return { ...prev };
+      });
+    }
+  }, [
+    infoBannerRef,
+    beginSimulation.start,
+    beginSimulation.finished,
+    numberSurvivors.reset,
+    setNumberSurvivors,
+    resourceQuantity,
+  ]);
 
   return (
     <CanvasWrapper
@@ -174,10 +199,13 @@ export const CanvasContainer = (props) => {
             setFoodStateArray={setFoodStateArray}
             setWaterStateArray={setWaterStateArray}
             setShelterStateArray={setShelterStateArray}
+            resourceQuantity={resourceQuantity}
             canvasDimensions={allCanvasDetails.canvasDimensions}
             beginSimulation={beginSimulation}
             setSurvivorState={setSurvivorState}
             timer={timer}
+            numberSurvivors={numberSurvivors}
+            setNumberSurvivors={setNumberSurvivors}
           />
           <FoodWindow
             foodStateXY={allCanvasDetails.foodStateXY}
@@ -185,7 +213,6 @@ export const CanvasContainer = (props) => {
             setFoodStateArray={setFoodStateArray}
             canvasDimensions={allCanvasDetails.canvasDimensions}
             environmentsPath={environmentsPath}
-            environmentsIconsObject={environmentsIconsObject}
           />
           <WaterWindow
             waterStateXY={allCanvasDetails.waterStateXY}
@@ -193,7 +220,6 @@ export const CanvasContainer = (props) => {
             setWaterStateArray={setWaterStateArray}
             canvasDimensions={allCanvasDetails.canvasDimensions}
             environmentsPath={environmentsPath}
-            environmentsIconsObject={environmentsIconsObject}
           />
           <ShelterWindow
             shelterStateXY={allCanvasDetails.shelterStateXY}
@@ -201,7 +227,6 @@ export const CanvasContainer = (props) => {
             setShelterStateArray={setShelterStateArray}
             canvasDimensions={allCanvasDetails.canvasDimensions}
             environmentsPath={environmentsPath}
-            environmentsIconsObject={environmentsIconsObject}
           />
         </div>
       )}

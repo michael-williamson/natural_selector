@@ -17,6 +17,8 @@ export const SurvivorWindow = (props) => {
   const { beginSimulation } = props;
   const { setSurvivorState } = props;
   const { timer } = props;
+  const { numberSurvivors } = props;
+  const { setNumberSurvivors } = props;
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
@@ -77,15 +79,25 @@ export const SurvivorWindow = (props) => {
     const canvas = canvasRef.current;
 
     let countDown = timer;
+    let clearTimer = false;
     //periodic checks for stats
     let firstCheck = false;
     let secondCheck = false;
+    //also track completion of code to prevent calling more than necessary
+    let firstCheckCompleted = false;
+    let secondCheckCompleted = false;
+    let firstCheckTimer = Math.floor(timer / 2);
+    let secondCheckTimer = Math.floor(timer / 4);
 
     //boolean logic gate for time interval checks
     const timerID = setInterval(() => {
-      if (countDown <= 15 && !firstCheck) {
+      if (countDown <= firstCheckTimer && !firstCheck && !firstCheckCompleted) {
         firstCheck = true;
-      } else if (countDown <= 5 && !secondCheck) {
+      } else if (
+        countDown <= secondCheckTimer &&
+        !secondCheck &&
+        !secondCheckCompleted
+      ) {
         secondCheck = true;
       }
       countDown = countDown -= 1;
@@ -160,7 +172,7 @@ export const SurvivorWindow = (props) => {
     const animateNodes = (timestamp) => {
       if (start === undefined) start = timestamp;
       const elapsed = timestamp - start;
-      if (elapsed < 0) return;
+      if (elapsed < 0 || clearTimer) return;
       let totalTimeMilliseconds = timer * 1000;
       if (elapsed < totalTimeMilliseconds) {
         window.requestAnimationFrame(animateNodes);
@@ -222,11 +234,13 @@ export const SurvivorWindow = (props) => {
       });
 
       if (firstCheck || secondCheck) {
+        let quantityCheck = firstCheck ? 1 : 2;
+
         survivorStateArray = survivorStateArray.filter((item) => {
           if (
-            survivorCountArray[item.index].foodCount < 1 ||
-            survivorCountArray[item.index].waterCount < 1 ||
-            survivorCountArray[item.index].shelterCount < 1
+            survivorCountArray[item.index].foodCount < quantityCheck ||
+            survivorCountArray[item.index].waterCount < quantityCheck ||
+            survivorCountArray[item.index].shelterCount < quantityCheck
           ) {
             setSurvivorState((prev) => {
               prev[item.index].eliminated = true;
@@ -234,21 +248,10 @@ export const SurvivorWindow = (props) => {
             });
             return false;
           } else {
-            let count =
-              survivorCountArray[item.index].foodCount +
-              survivorCountArray[item.index].waterCount +
-              survivorCountArray[item.index].shelterCount;
-            if (firstCheck && count >= 3) {
-              setSurvivorState((prev) => {
-                prev[item.index].adaptation = 1;
-                return [...prev];
-              });
-            } else if (secondCheck && count >= 6) {
-              setSurvivorState((prev) => {
-                prev[item.index].adaptation = 2;
-                return [...prev];
-              });
-            }
+            setSurvivorState((prev) => {
+              prev[item.index].adaptation = quantityCheck;
+              return [...prev];
+            });
 
             return true;
           }
@@ -256,8 +259,18 @@ export const SurvivorWindow = (props) => {
         // first and second check only needs to apply to one loop
         if (firstCheck) {
           firstCheck = false;
+          firstCheckCompleted = true;
+          setNumberSurvivors((prev) => {
+            prev.firstElimination = true;
+            return { ...prev };
+          });
         } else if (secondCheck) {
           secondCheck = false;
+          secondCheckCompleted = true;
+          setNumberSurvivors((prev) => {
+            prev.secondElimination = true;
+            return { ...prev };
+          });
         }
       }
       //shorter array indicates value was intercepted, update arrays after main loop complete
@@ -278,6 +291,12 @@ export const SurvivorWindow = (props) => {
       }
     };
     window.requestAnimationFrame(animateNodes);
+
+    return () => {
+      console.log("timerId cleared");
+      clearTimer = true;
+      clearInterval(timerID);
+    };
   }, [
     beginSimulation,
     canvasDimensions.buffer,
@@ -293,6 +312,8 @@ export const SurvivorWindow = (props) => {
     survivorStateXY,
     timer,
     canvasDimensions.iconDimensions,
+    setNumberSurvivors,
+    numberSurvivors.reset,
   ]);
 
   return <canvas ref={canvasRef} id="dnaCanvas" />;

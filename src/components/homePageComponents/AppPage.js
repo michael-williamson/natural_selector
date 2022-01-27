@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { InfoBanner } from "../infoBannerComponents/InfoBanner";
@@ -11,6 +11,7 @@ export const AppPage = (props) => {
   const { environmentsPath, setEnvironmentsPath } = props;
   //default is 30 seconds for timer
   const [timer, setTimer] = useState(30);
+  const [reset, setReset] = useState(false);
   const [beginSimulation, setBeginSimulation] = useState({
     start: false,
     finished: false,
@@ -19,10 +20,28 @@ export const AppPage = (props) => {
   const [numberSurvivors, setNumberSurvivors] = useState({
     count: 10,
     max: 10,
+    reset: true,
+    firstElimination: false,
+    secondElimination: false,
   });
   const [survivorState, setSurvivorState] = useState(survivorStateFN(10));
 
   const infoBannerRef = useRef(null);
+
+  useEffect(() => {
+    if (!reset) return;
+    setTimer(30);
+    setNumberSurvivors({
+      count: 10,
+      max: 10,
+      reset: true,
+      firstElimination: false,
+      secondElimination: false,
+    });
+
+    setSurvivorState(survivorStateFN(10));
+    setReset(false);
+  }, [reset]);
 
   const handleClickNumSurvivors = (input) => (event) => {
     if (input && numberSurvivors.count === numberSurvivors.max) return;
@@ -66,10 +85,14 @@ export const AppPage = (props) => {
       prev.finished = finished;
       return { ...prev };
     });
+  };
 
-    !start &&
-      !finished &&
-      setSurvivorState(survivorStateFN(numberSurvivors.count));
+  const handleResetSimulation = () => {
+    setBeginSimulation({
+      start: false,
+      finished: false,
+    });
+    setReset(true);
   };
 
   return (
@@ -78,6 +101,7 @@ export const AppPage = (props) => {
         <Grid item xs={12} lg={4}>
           <SurvivalScoreboard
             handleSimulation={handleSimulation}
+            handleResetSimulation={handleResetSimulation}
             beginSimulation={beginSimulation}
             setBeginSimulation={setBeginSimulation}
             handleClickNumSurvivors={handleClickNumSurvivors}
@@ -93,6 +117,7 @@ export const AppPage = (props) => {
           <CanvasContainer
             beginSimulation={beginSimulation}
             numberSurvivors={numberSurvivors}
+            setNumberSurvivors={setNumberSurvivors}
             setSurvivorState={setSurvivorState}
             environmentsPath={environmentsPath}
             infoBannerRef={infoBannerRef}

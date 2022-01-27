@@ -1,15 +1,13 @@
 import React, { useRef, useEffect } from "react";
+import { environmentIconObject } from "../../helperFunctions";
 
 export const WaterWindow = (props) => {
   const { waterStateXY } = props;
   const { waterStateArray } = props;
   const { canvasDimensions } = props;
   const { environmentsPath } = props;
-  const { environmentsIconsObject } = props;
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
-
-  const icon = environmentsIconsObject[environmentsPath].water;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -24,21 +22,27 @@ export const WaterWindow = (props) => {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    const image = new Image();
+
     waterStateXY.forEach((item) => {
-      contextRef.current.drawImage(
-        icon,
-        item.x,
-        item.y,
-        iconDimensions,
-        iconDimensions
-      );
+      image.addEventListener("load", (e) => {
+        contextRef.current.drawImage(
+          image,
+          item.x,
+          item.y,
+          iconDimensions,
+          iconDimensions
+        );
+      });
     });
+
+    image.src = environmentIconObject[environmentsPath].water;
   }, [
     canvasDimensions.canvasHeight,
     canvasDimensions.canvasWidth,
     waterStateXY,
-    icon,
     canvasDimensions.iconDimensions,
+    environmentsPath,
   ]);
 
   useEffect(() => {
@@ -54,5 +58,5 @@ export const WaterWindow = (props) => {
     });
   }, [canvasDimensions.iconDimensions, waterStateArray, waterStateXY]);
 
-  return <canvas ref={canvasRef} id="foodCanvas"></canvas>;
+  return <canvas ref={canvasRef} id="waterCanvas"></canvas>;
 };

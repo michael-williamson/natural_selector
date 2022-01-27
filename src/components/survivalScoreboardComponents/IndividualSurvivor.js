@@ -59,7 +59,7 @@ export const IndividualSurvivor = (props) => {
             </Box>
           </Box>
           <Box display="flex">
-            <Box color="primary.light">Adaptation: </Box>
+            <Box color="primary.light">Adaptations: </Box>
             <Box>
               <ImageComponent
                 iterations={adaptation}
