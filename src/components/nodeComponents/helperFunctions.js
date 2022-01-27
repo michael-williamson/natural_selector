@@ -39,11 +39,17 @@ export const xyCoordinateGenerator = (
     let y = Math.random() * canvasHeight;
     x = Math.floor(x);
     y = Math.floor(y);
-    if (x >= bufferedWidth || x <= buffer) {
-      x = x >= bufferedWidth ? bufferedWidth : buffer;
+    // if (x >= bufferedWidth || x <= buffer) {
+    //   x = x >= bufferedWidth ? bufferedWidth : buffer;
+    // }
+    // if (y >= bufferedHeight || y <= buffer) {
+    //   y = y >= bufferedHeight ? bufferedHeight : buffer;
+    // }
+    if (x >= bufferedWidth) {
+      x = bufferedWidth;
     }
-    if (y >= bufferedHeight || y <= buffer) {
-      y = y >= bufferedHeight ? bufferedHeight : buffer;
+    if (y >= bufferedHeight) {
+      y = bufferedHeight;
     }
     nodeArray.push(new XYObject(x, y, i));
   }
@@ -64,11 +70,17 @@ export const xyCoordinateObject = (canvasWidth, canvasHeight, buffer) => {
   const bufferedWidth = canvasWidth - buffer;
   const bufferedHeight = canvasHeight - buffer;
 
-  if (x >= bufferedWidth || x <= buffer) {
-    x = x >= bufferedWidth ? bufferedWidth : buffer;
+  // if (x >= bufferedWidth || x <= buffer) {
+  //   x = x >= bufferedWidth ? bufferedWidth : buffer;
+  // }
+  // if (y >= bufferedHeight || y <= buffer) {
+  //   y = y >= bufferedHeight ? bufferedHeight : buffer;
+  // }
+  if (x >= bufferedWidth) {
+    x = bufferedWidth;
   }
-  if (y >= bufferedHeight || y <= buffer) {
-    y = y >= bufferedHeight ? bufferedHeight : buffer;
+  if (y >= bufferedHeight) {
+    y = bufferedHeight;
   }
   return new XYObject(x, y);
 };

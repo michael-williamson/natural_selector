@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Box } from "@mui/system";
 import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
+// import useMediaQuery from "@mui/material/useMediaQuery";
+// import AlarmIcon from "@mui/icons-material/Alarm";
 import { Button } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -23,10 +24,14 @@ export const SurvivalScoreboard = (props) => {
   const { numberSurvivors } = props;
   const { survivorState } = props;
   const { timer, setTimer } = props;
+
+  const theme = useTheme();
+  console.log(theme, "theme");
+
   const [countDown, setCountDown] = useState(30);
   const [countDownFinished, setCountDownFinished] = useState(false);
-  const theme = useTheme();
-  const expanded = useMediaQuery(theme.breakpoints.up("lg"));
+  // const theme = useTheme();
+  // const expanded = useMediaQuery(theme.breakpoints.up("lg"));
   const { environmentsPath, setEnvironmentsPath } = props;
 
   useEffect(() => {
@@ -133,20 +138,39 @@ export const SurvivalScoreboard = (props) => {
           </Button>
         </Box>
       </Box>
-      <Box display="flex" justifyContent="center" py={2} alignItems="center">
-        <Box fontSize={20} fontWeight="bold" color="primary.light">
-          Timer:
-        </Box>
-        <Box fontSize={30} fontWeight="bold" color="primary.light" px={2}>
-          {countDown}
-        </Box>
-        <Box fontSize={20} fontWeight="bold" color="primary.light">
-          seconds
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        py={2}
+        alignItems="center"
+      >
+        {/* <Box>
+          <AlarmIcon
+            sx={{ color: theme.palette.customColors.lightBlue, fontSize: 70 }}
+          />
+        </Box> */}
+        <Box display="flex" justifyContent="center" py={2} alignItems="center">
+          <Box fontSize={20} fontWeight="bold" color="primary.light">
+            Timer:
+          </Box>
+          <Box
+            fontSize={53}
+            fontWeight="bold"
+            // sx={{ color: theme.palette.customColors.lightBlue }}
+            color="primary.light"
+            px={2}
+          >
+            {countDown}
+          </Box>
+          <Box fontSize={20} fontWeight="bold" color="primary.light">
+            seconds
+          </Box>
         </Box>
       </Box>
       <Box>
         <Box
-          fontSize={20}
+          fontSize={18}
           fontWeight="bold"
           color={
             numberSurvivors.firstElimination ? "text.disabled" : "primary.light"
@@ -157,7 +181,7 @@ export const SurvivalScoreboard = (props) => {
       </Box>
       <Box>
         <Box
-          fontSize={20}
+          fontSize={18}
           fontWeight="bold"
           color={
             numberSurvivors.secondElimination
@@ -176,9 +200,9 @@ export const SurvivalScoreboard = (props) => {
         />
       </Box>
       <Box maxHeight={500} overflow="scroll">
-        <Accordion expanded={expanded} sx={{ pb: 16 }}>
+        <Accordion sx={{ lg: { pb: 16 } }}>
           <AccordionSummary
-            expandIcon={expanded ? "" : <ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >

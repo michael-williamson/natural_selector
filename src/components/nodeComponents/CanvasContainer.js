@@ -37,6 +37,7 @@ export const CanvasContainer = (props) => {
   const { environmentsPath } = props;
   const { timer } = props;
   const { infoBannerRef } = props;
+  const { mdScreen } = props;
   const { numberSurvivors, setNumberSurvivors } = props;
   const [allCanvasDetails, setAllCanvasDetails] = useState(null);
   const [foodStateArray, setFoodStateArray] = useState(null);
@@ -101,8 +102,12 @@ export const CanvasContainer = (props) => {
     const currentDiv = canvasContainer.current;
     let cHeight = currentDiv.clientHeight;
     let cWidth = currentDiv.clientWidth;
-    const currentInfoBanner = infoBannerRef.current;
-    const offsetHeight = window.innerHeight - currentInfoBanner.clientHeight;
+    // const currentInfoBanner = infoBannerRef.current;
+    //dashboard will be fixed size for laptop plus screens
+    // const offsetHeight = mdScreen
+    //   ? 500
+    //   : window.innerHeight - currentInfoBanner.clientHeight;
+    // console.log(mdScreen, offsetHeight, cHeight, "offsetheight");
     let offsetWidth = window.innerWidth - cWidth;
 
     //central location to set buffer of canvas and image size so that images don't disappear off page
@@ -135,7 +140,7 @@ export const CanvasContainer = (props) => {
     setAllCanvasDetails({
       canvasDimensions: {
         canvasX: offsetWidth,
-        canvasHeight: offsetHeight,
+        canvasHeight: cHeight,
         canvasWidth: cWidth,
         buffer: buffer,
         iconDimensions: iconDimensions,
@@ -171,6 +176,7 @@ export const CanvasContainer = (props) => {
     numberSurvivors.reset,
     setNumberSurvivors,
     resourceQuantity,
+    mdScreen,
   ]);
 
   return (

@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { InfoBanner } from "../infoBannerComponents/InfoBanner";
 import { CanvasContainer } from "../nodeComponents/CanvasContainer";
 import { SurvivalScoreboard } from "../survivalScoreboardComponents/SurvivalScoreboard";
@@ -9,6 +11,8 @@ import { environmentIconObject } from "../../helperFunctions";
 
 export const AppPage = (props) => {
   const { environmentsPath, setEnvironmentsPath } = props;
+  const theme = useTheme();
+  const mdScreen = useMediaQuery(theme.breakpoints.down("md"));
   //default is 30 seconds for timer
   const [timer, setTimer] = useState(30);
   const [reset, setReset] = useState(false);
@@ -122,6 +126,7 @@ export const AppPage = (props) => {
             environmentsPath={environmentsPath}
             infoBannerRef={infoBannerRef}
             timer={timer}
+            mdScreen={mdScreen}
           />
           <InfoBanner
             beginSimulation={beginSimulation}
