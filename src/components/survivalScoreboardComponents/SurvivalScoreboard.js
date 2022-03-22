@@ -14,6 +14,7 @@ import { HelpDialogComponent } from "../reusableComponents/HelpDialogComponent";
 import { SliderSelectorComponent } from "../reusableComponents/SliderSelectorComponent";
 import { MenuComponent } from "../homePageComponents/MenuComponent";
 import { environmentPathObject } from "../../helperFunctions";
+import { dnaIcon } from "../../media";
 
 export const SurvivalScoreboard = (props) => {
   const { handleSimulation } = props;
@@ -26,7 +27,6 @@ export const SurvivalScoreboard = (props) => {
   const { timer, setTimer } = props;
 
   const theme = useTheme();
-  console.log(theme, "theme");
 
   const [countDown, setCountDown] = useState(30);
   const [countDownFinished, setCountDownFinished] = useState(false);
@@ -73,7 +73,16 @@ export const SurvivalScoreboard = (props) => {
 
   return (
     <Box bgcolor="primary.main">
-      <Box fontSize={40} fontWeight="bold" color="primary.light">
+      <Box
+        sx={{
+          fontSize: { xs: 40 },
+          fontWeight: "bold",
+          color: "primary.light",
+          fontFamily: (theme) => theme.fonts.chewy,
+          py: { xs: 4 },
+          px: { xs: 1 },
+        }}
+      >
         Survival Scoreboard
       </Box>
       <Box py={2}>
@@ -200,11 +209,19 @@ export const SurvivalScoreboard = (props) => {
         />
       </Box>
       <Box maxHeight={500} overflow="scroll">
-        <Accordion sx={{ lg: { pb: 16 } }}>
+        <Accordion
+          sx={{ lg: { pb: 16 }, bgcolor: theme.palette.customColors.bgBlue }}
+        >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
+            sx={{
+              bgcolor: "primary.main",
+
+              border: 2,
+              borderColor: "primary.light",
+            }}
           >
             <Box
               sx={{
@@ -217,6 +234,15 @@ export const SurvivalScoreboard = (props) => {
               }}
             >
               Survivors
+            </Box>
+            <Box pl={2}>
+              <img src={dnaIcon} alt="dna" width="60px" />
+            </Box>
+            <Box pl={2}>
+              <img src={dnaIcon} alt="dna" width="60px" />
+            </Box>
+            <Box pl={2}>
+              <img src={dnaIcon} alt="dna" width="60px" />
             </Box>
           </AccordionSummary>
           <AccordionDetails>
