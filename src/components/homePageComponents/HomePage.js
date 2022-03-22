@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Button } from "@mui/material";
+import { Grid, Button, CardMedia } from "@mui/material";
 import { Box } from "@mui/system";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -25,8 +25,12 @@ export const HomePage = (props) => {
     return 200;
   };
 
+  const headerIconStyles = {
+    height: { xs: "70px" },
+  };
+
   return (
-    <Grid item xs={10} className="homePageContainer">
+    <Grid item xs={12} className="homePageContainer" sx={{ pb: { xs: 8 } }}>
       <Box
         sx={{
           borderRight: 4,
@@ -45,27 +49,47 @@ export const HomePage = (props) => {
           wrap="nowrap"
         >
           <Grid container item xs={12} justifyContent="center" spacing={2}>
-            <Grid item xs={10} md={4}>
+            <Grid item xs={12} md={4}>
               <Box
                 sx={{
                   color: "secondary.main",
-                  p: 4,
-                  bgcolor: "primary.main",
+                  p: { xs: 0, md: 4 },
                   borderRadius: 5,
-                  my: { xs: 2, md: 4 },
+                  mt: { xs: 5, md: 4 },
                 }}
               >
-                <Box fontWeight="bold" fontSize={40}>
+                <Box
+                  sx={{
+                    fontSize: { xs: 40 },
+                    fontWeight: "bold",
+                    fontFamily: (theme) => theme.fonts.chewy,
+                    py: { xs: 2 },
+                  }}
+                >
                   Natural Selector
                 </Box>
-                <Box>
-                  <img src={dnaIcon} alt="dna" />
-                </Box>
-                <Box>
-                  <img src={grassIcon} alt="grass" />
-                </Box>
-                <Box>
-                  <img src={waterIcon} alt="water" />
+                <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+                  <Box>
+                    <CardMedia
+                      sx={headerIconStyles}
+                      src={dnaIcon}
+                      component="img"
+                    />
+                  </Box>
+                  <Box>
+                    <CardMedia
+                      sx={headerIconStyles}
+                      src={grassIcon}
+                      component="img"
+                    />
+                  </Box>
+                  <Box>
+                    <CardMedia
+                      sx={headerIconStyles}
+                      src={waterIcon}
+                      component="img"
+                    />
+                  </Box>
                 </Box>
               </Box>
             </Grid>
@@ -79,7 +103,8 @@ export const HomePage = (props) => {
                     p: 4,
                     mt: { xs: 2 },
                     mb: { xs: 2 },
-                    bgcolor: "primary.main",
+                    border: (theme) =>
+                      `5px solid ${theme.palette.primary.main}`,
                     borderRadius: 5,
                   }}
                 >
@@ -96,7 +121,8 @@ export const HomePage = (props) => {
                     p: 4,
                     mt: { xs: 2 },
                     mb: { xs: 2 },
-                    bgcolor: "primary.main",
+                    border: (theme) =>
+                      `5px solid ${theme.palette.primary.main}`,
                     borderRadius: 5,
                   }}
                 >

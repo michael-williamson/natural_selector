@@ -1,5 +1,11 @@
 import { createTheme } from "@mui/material/styles";
 
+const googleFonts = {
+  chewy: "Chewy",
+  luckiestGuy: "Luckiest Guy",
+  paletteMosaic: "Palette Mosaic",
+};
+
 export const theme = createTheme({
   palette: {
     primary: {
@@ -11,6 +17,15 @@ export const theme = createTheme({
     },
     customColors: {
       lightBlue: "#7af3ff",
+      bgBlue: "#56b0ff",
     },
   },
+  fonts: {
+    ...googleFonts,
+  },
 });
+
+//fonts for easy copy paste
+// font-family: 'Chewy', cursive;
+// font-family: 'Luckiest Guy', cursive;
+// font-family: 'Palette Mosaic', cursive;

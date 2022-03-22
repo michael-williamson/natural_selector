@@ -11,7 +11,7 @@ function App() {
     environmentPathObject.desert
   );
   return (
-    <Grid container className="App" justifyContent="center">
+    <Grid className="App" justifyContent="center">
       <Routes>
         <Route
           exact

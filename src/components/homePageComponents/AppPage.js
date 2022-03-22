@@ -100,7 +100,13 @@ export const AppPage = (props) => {
   };
 
   return (
-    <Box sx={{ height: { lg: "100vh" }, width: "100%" }}>
+    <Box
+      sx={{
+        height: { lg: "100vh" },
+        width: "100%",
+        // bgcolor: theme.palette.customColors.bgBlue,
+      }}
+    >
       <Grid container>
         <Grid item xs={12} lg={4}>
           <SurvivalScoreboard
